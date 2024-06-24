@@ -1,0 +1,13 @@
+/knowledge
+addtemporal
+
+1*  x y z
+2  w r
+
+forbiddirect
+w z
+
+requiredirect
+a b
+x b
+

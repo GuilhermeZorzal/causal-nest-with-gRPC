@@ -1,0 +1,16 @@
+/knowledge
+addtemporal
+
+1  Rings Sex
+2  ShkW ShlW VisW
+3  WhW
+
+forbiddirect
+Diam Sex
+Len Sex
+Hei Sex
+Diam Rings
+Len Rings
+Hei Rings
+
+requiredirect

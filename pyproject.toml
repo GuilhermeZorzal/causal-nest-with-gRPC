@@ -1,0 +1,126 @@
+[tool.poetry]
+name = "causal-nest"
+version = "1.0.0"
+description = "A nest of causal tools for building a full causal pipeline: from data treating, exploring to causal discovery and inference!"
+authors = ["REDACTED"]
+readme = "README.md"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# Source for PyTorch download
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+scikit-learn = "^1.2"
+numpy = "^1.26"
+dowhy = "^0.10"
+scipy = "^1.11.3"
+joblib = "^1.3.2"
+pandas = "^2.1.2"
+networkx = "^2.8.8"
+tqdm = "^4.66"
+GPUtil = "^1.4"
+statsmodels = "^0.14"
+requests = "^2.31"
+causal-learn = "^0.1.3"
+matplotlib = "^3.8.0"
+graphviz = "^0.20.1"
+cdt = "^0.6.0"
+seaborn = "^0.13.0"
+eli5 = "^0.13.0"
+pdpbox = "^0.3.0"
+shap = "^0.43.0"
+torch = [
+    {version = "<=1.99", python = ">=3.8,<3.11"},
+    {version = "^2.0", python = ">=3.11", source = "torch"}
+]
+torchvision = [
+    {version = ">=0.13.1", python = ">=3.8,<3.11"},
+    {version = ">=0.15.1", python=">=3.11", source = "torch"}
+]
+pytorch-lightning = "^1.7.7"
+pebble = "^5.0.4"
+gradio = {version = "^4.32.2", optional = true}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+pytest-split = "^0.8.0"
+nbformat = "^5.4.0"
+jupyter = "^1.0.0"
+flaky = "^3.7.0"
+keras = "^2.9.0"
+xgboost = "^1.7.0"
+mypy = "^0.971"
+black = { version = "^22.6.0", extras = ["jupyter"] }
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+poethepoet = "^0.16.0"
+
+[tool.poetry.extras]
+pygraphviz = ["pygraphviz"]
+pydot = ["pydot"]
+plotting = ["matplotlib"]
+econml = ["econml"]
+webui = ["gradio"]
+
+[tool.poe.tasks]
+# stop the build if there are Python syntax errors or undefined names
+_flake8Errors = "flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics"
+_flake8Warnings = "flake8 . --count --exit-zero --statistics"
+_black = 'black .'
+_isort = 'isort .'
+_black_check = 'black --check .'
+_isort_check = 'isort --check .'
+
+# testing tasks
+test = "pytest -v -m 'not advanced and not econml' --durations=0 --durations-min=60.0"
+test_no_notebooks= "pytest -v -m 'not advanced and not econml and not notebook' --durations=0 --durations-min=60.0"
+test_durations = "poetry run poe test --store-durations"
+test_econml = "pytest -v -m 'econml' --durations=0 --durations-min=60.0"
+test_advanced = "pytest -v"
+test_focused = "pytest -v -m 'focused'"
+
+[tool.poe.tasks.format]
+sequence = ['_black', '_isort']
+ignore_fail = 'return_non_zero'
+
+[tool.poe.tasks.format_check]
+sequence = ['_black_check', '_isort_check']
+ignore_fail = 'return_non_zero'
+
+[tool.poe.tasks.lint]
+sequence = ['_flake8Errors', '_flake8Warnings']
+ignore_fail = 'return_non_zero'
+
+[tool.poe.tasks.verify]
+sequence = ['lint', 'format_check', 'test']
+ignore_fail = "return_non_zero"
+
+[tool.black]
+line-length = 120
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+(
+      __pycache__
+    | \.github
+)
+'''
+
+[tool.pylint]
+max-line-length = 120
+disable = ["W0511"]
+
+[tool.isort]
+profile = 'black'
+multi_line_output = 3
+line_length = 120
+py_version = 38
