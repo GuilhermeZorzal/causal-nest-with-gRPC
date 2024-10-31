@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "causal-nest"
-version = "1.0.0"
+version = "0.1.0"
 description = "A nest of causal tools for building a full causal pipeline: from data treating, exploring to causal discovery and inference!"
-authors = ["REDACTED"]
+authors = ["Gustavo Viegas <gustavo.viegas@ufv.br>"]
 readme = "README.md"
 
 [build-system]
