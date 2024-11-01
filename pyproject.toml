@@ -47,6 +47,7 @@ torchvision = [
 pytorch-lightning = "^1.7.7"
 pebble = "^5.0.4"
 gradio = {version = "^4.32.2", optional = true}
+pdoc = "^15.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
