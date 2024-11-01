@@ -21,6 +21,16 @@
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
 
+            <h2>Contents</h2>
+            <ul>
+  <li><a href="#causalnest">CausalNest</a>
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#commands">Commands</a></li>
+    <li><a href="#quick-example">Quick Example</a></li>
+  </ul></li>
+</ul>
+
 
             <h2>Submodules</h2>
             <ul>
@@ -54,10 +64,130 @@
                     <h1 class="modulename">
 causal_nest    </h1>
 
-                
-                
-                
-                
+                        <div class="docstring"><h1 id="causalnest">CausalNest</h1>
+
+<p>A nest of causal tools for building a full causal pipeline: from data treating, exploring to causal discovery and inference!</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>CausalNest provides a comprehensive suite of tools for building a full causal pipeline, from data treatment and exploration to causal discovery and inference. The framework is organized into several modules:</p>
+
+<ul>
+<li><code>dataset</code>: Tools for handling datasets, including missing data handling and feature type definitions.</li>
+<li><code>discovery_models</code>: Implementations of various causal discovery algorithms.</li>
+<li><code>distribution</code>: Functions for statistical distribution analysis.</li>
+<li><code>estimation</code>: Methods for estimating causal effects.</li>
+<li><code>knowledge</code>: Structures for encoding prior knowledge about causal relationships.</li>
+<li><code>problem</code>: Defines the causal problem and integrates various components.</li>
+<li><code>refutation_models</code>: Methods for refuting causal claims.</li>
+<li><code>result</code>: Structures for storing and displaying results from causal discovery, estimation, and refutation.</li>
+<li><code>stats</code>: Statistical functions for evaluating causal models.</li>
+<li><code>utils</code>: Utility functions used across the framework.</li>
+</ul>
+
+<h2 id="commands">Commands</h2>
+
+<ul>
+<li>Install: <code>poetry install</code> </li>
+<li>Test: <code>poetry run poe test</code> </li>
+<li>Format: <code>poetry run poe format</code> </li>
+</ul>
+
+<h2 id="quick-example">Quick Example</h2>
+
+<p>Here is a quick example of how to use the CausalNest framework with Sachs dataset</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span> 
+
+
+<span class="c1"># Import the dataset</span>
+<span class="kn">from</span> <span class="nn">cdt.data</span> <span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="n">sachs</span><span class="p">,</span> <span class="n">sachs_ground_truth</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;sachs&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># Define the dataset feature mapping, target, and the problem</span>
+<span class="kn">from</span> <span class="nn"><a href="causal_nest/problem.html">causal_nest.problem</a></span> <span class="kn">import</span> <span class="n">MissingDataHandlingMethod</span><span class="p">,</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">handle_missing_data</span><span class="p">,</span> <span class="n">FeatureTypeMap</span><span class="p">,</span> <span class="n">FeatureType</span><span class="p">,</span> <span class="n">estimate_feature_importances</span>
+
+<span class="n">feature_mapping</span> <span class="o">=</span> <span class="p">[</span><span class="n">FeatureTypeMap</span><span class="p">(</span><span class="n">feature</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">FeatureType</span><span class="o">.</span><span class="n">CONTINUOUS</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">sachs</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;plcg&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sachs</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;plcg&#39;</span><span class="p">,</span> <span class="n">feature_mapping</span><span class="o">=</span><span class="n">feature_mapping</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">handle_missing_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">MissingDataHandlingMethod</span><span class="o">.</span><span class="n">FORWARD_FILL</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">estimate_feature_importances</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Sachs&#39;</span><span class="p">)</span>
+
+<span class="c1"># Check out the feature sorting (a cool feature from CausalNest)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">feature_mapping</span><span class="p">)</span>
+
+
+<span class="c1"># Causal Discovery</span>
+<span class="c1">## Fetch applyable models</span>
+<span class="kn">from</span> <span class="nn"><a href="causal_nest/discovery.html">causal_nest.discovery</a></span> <span class="kn">import</span> <span class="n">applyable_models</span>
+
+<span class="n">models</span> <span class="o">=</span> <span class="n">applyable_models</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+
+<span class="c1">## Run discovery from these models</span>
+<span class="kn">from</span> <span class="nn"><a href="causal_nest/discovery.html">causal_nest.discovery</a></span> <span class="kn">import</span> <span class="n">discover_with_all_models</span>
+
+<span class="n">real_results</span> <span class="o">=</span> <span class="n">discover_with_all_models</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">real_results</span><span class="p">)</span>
+
+<span class="c1">## Sorting results by potential and feature importance</span>
+<span class="n">sorted_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">real_results</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">priority_score</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sorted_results</span><span class="p">)</span>
+
+<span class="c1"># Estimating</span>
+<span class="kn">from</span> <span class="nn"><a href="causal_nest/estimation.html">causal_nest.estimation</a></span> <span class="kn">import</span> <span class="n">estimate_all_effects</span>
+
+<span class="n">est_results</span> <span class="o">=</span> <span class="n">estimate_all_effects</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">real_results</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">est_results</span><span class="p">)</span>
+
+<span class="c1"># Refuting</span>
+<span class="kn">from</span> <span class="nn"><a href="causal_nest/refutation.html">causal_nest.refutation</a></span> <span class="kn">import</span> <span class="n">refute_all_results</span>
+
+<span class="n">ref_results</span> <span class="o">=</span> <span class="n">refute_all_results</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">est_results</span><span class="p">,</span> <span class="n">max_seconds_global</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">max_seconds_model</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ref_results</span><span class="p">)</span>
+
+<span class="c1"># Visualizing</span>
+<span class="kn">from</span> <span class="nn"><a href="causal_nest/result.html">causal_nest.result</a></span> <span class="kn">import</span> <span class="n">generate_result_graph</span>
+
+<span class="n">graphs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">real_results</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">continue</span>
+
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">generate_result_graph</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">est_results</span><span class="p">,</span> <span class="n">ref_results</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">graphs</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">model</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span>
+
+
+<span class="c1">## Using Graphviz to render a custom DOT</span>
+<span class="kn">import</span> <span class="nn">pydot</span>
+<span class="kn">from</span> <span class="nn">graphviz</span> <span class="kn">import</span> <span class="n">Source</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FAST_IAMB&#39;</span><span class="p">)</span>
+<span class="n">graphviz_source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">graphs</span><span class="p">[</span><span class="s1">&#39;FAST_IAMB&#39;</span><span class="p">])</span>
+<span class="n">graphviz_source</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PC&#39;</span><span class="p">)</span>
+<span class="n">graphviz_source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">graphs</span><span class="p">[</span><span class="s1">&#39;PC&#39;</span><span class="p">])</span>
+<span class="n">graphviz_source</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>For more detailed examples and usage, please refer to the notebooks directory.</p>
+</div>
+
+                        <input id="mod-causal_nest-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+
+                        <label class="view-source-button" for="mod-causal_nest-view-source"><span>View Source</span></label>
+
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ../README.md</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
             </section>
     </main>
 <script>
