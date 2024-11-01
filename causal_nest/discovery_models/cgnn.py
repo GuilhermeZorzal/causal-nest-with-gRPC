@@ -18,6 +18,7 @@ class CGNN(DiscoveryMethodModel):
     Raises:
         ValueError: If the method is not allowed to be used with the given dataset.
     """
+
     def __init__(self):
         super().__init__(
             allowed_feature_types=[FeatureType.CONTINUOUS], gaussian_assumption=False, linearity_assumption=False

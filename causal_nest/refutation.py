@@ -121,7 +121,7 @@ def refute_all_results(
                 except TimeoutError:
                     pass
                 except Exception as e:
-                    print(f'e: {e}')
+                    print(f"e: {e}")
                     pass
 
             elapsed_time = time.time() - start_time

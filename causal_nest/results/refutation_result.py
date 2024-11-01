@@ -21,6 +21,7 @@ class RefutationResult:
         runtime (Optional[float]): The runtime of the refutation process in seconds.
         passed (bool): Indicates whether the refutation passed based on the p-value.
     """
+
     treatment: str
     estimated_effect: float
     p_value: float

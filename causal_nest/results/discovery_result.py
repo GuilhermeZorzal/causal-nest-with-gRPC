@@ -21,6 +21,7 @@ class DiscoveryResult:
         forbidden_edges_violation_rate (Optional[float]): The rate of forbidden edges violations.
         required_edges_compliance_rate (Optional[float]): The rate of required edges compliance.
     """
+
     output_graph: nx.DiGraph = None
     model: str = None
     auc_pr: Optional[float] = None

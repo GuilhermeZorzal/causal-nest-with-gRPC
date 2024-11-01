@@ -55,6 +55,7 @@ known_methods = [
     CGNN,
 ]
 
+
 def applyable_models(problem: Problem):
     """
     Filters and returns a list of models that are applicable to the given problem.
@@ -166,17 +167,17 @@ def discover_with_all_models(
     """
     if max_workers is None:
         max_workers = cpu_count()
-    
+
     models = applyable_models(problem)
-    
+
     discovery_results = {models[i].__name__: None for i in range(len(models))}
     pool_args = [(problem, model, verbose, orient_toward_target) for model in models]
-    
+
     with ProcessPool(max_workers=max_workers) as pool:
         future = pool.map(_run_discover_with_model_task, pool_args, timeout=max_seconds_model)
-        
+
         iterator = future.result()
-        
+
         while True:
             try:
                 result = next(iterator)
@@ -193,5 +194,5 @@ def discover_with_all_models(
                 print("Function raised %s" % error)
                 print(error.traceback)
                 # raise error
-                
+
     return replace(problem, discovery_results=discovery_results)

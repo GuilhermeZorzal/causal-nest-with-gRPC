@@ -18,6 +18,7 @@ class GRASP(DiscoveryMethodModel):
         gaussian_assumption (bool): Indicates if the method assumes Gaussian distribution.
         linearity_assumption (bool): Indicates if the method assumes linearity.
     """
+
     def __init__(self):
         super().__init__(
             allowed_feature_types=[FeatureType.CONTINUOUS], gaussian_assumption=False, linearity_assumption=False

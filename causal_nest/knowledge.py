@@ -11,6 +11,7 @@ class Knowledge:
         required_edges (List[Tuple[str, str]]): A list of tuples representing the required edges.
         forbidden_edges (List[Tuple[str, str]]): A list of tuples representing the forbidden edges.
     """
+
     required_edges: List[Tuple[str, str]] = field(default_factory=list)
     forbidden_edges: List[Tuple[str, str]] = field(default_factory=list)
 

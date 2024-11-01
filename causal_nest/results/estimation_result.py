@@ -21,6 +21,7 @@ class EstimationResult:
         treatment_value (Optional[Any]): The value of the treatment group.
         p_value (Optional[Any]): The p-value associated with the estimate.
     """
+
     model: Optional[str] = None
     treatment: Optional[str] = None
     estimand: Optional[Any] = None
