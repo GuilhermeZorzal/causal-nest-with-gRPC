@@ -55,14 +55,34 @@ known_methods = [
     CGNN,
 ]
 
-
 def applyable_models(problem: Problem):
+    """
+    Filters and returns a list of models that are applicable to the given problem.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset.
+
+    Returns:
+        list: A list of models that are applicable to the given problem.
+    """
     return list(filter(lambda m: m().is_method_allowed(problem.dataset), known_methods))
 
 
 def discover_with_model(
     problem: Problem, model: DiscoveryMethodModel, verbose: bool = False, orient_toward_target: bool = True
 ):
+    """
+    Discovers a causal graph using the specified model.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset.
+        model (DiscoveryMethodModel): The discovery model to use.
+        verbose (bool, optional): If True, prints and plots the discovered graph. Defaults to False.
+        orient_toward_target (bool, optional): If True, orients the graph toward the target. Defaults to True.
+
+    Returns:
+        DiscoveryResult: The result of the discovery process, including the discovered graph and various statistics.
+    """
     model_name = model.__name__
 
     start = timer()
@@ -112,6 +132,15 @@ def discover_with_model(
 
 
 def _run_discover_with_model_task(args):
+    """
+    Helper function to run the discovery process with a model.
+
+    Args:
+        args (tuple): A tuple containing the arguments for the discover_with_model function.
+
+    Returns:
+        DiscoveryResult: The result of the discovery process.
+    """
     return discover_with_model(*args)
 
 
@@ -122,19 +151,32 @@ def discover_with_all_models(
     max_workers: int = None,
     orient_toward_target: bool = True,
 ):
+    """
+    Discovers causal graphs using all applicable models.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset.
+        max_seconds_model (int, optional): The maximum time allowed for each model. Defaults to 90.
+        verbose (bool, optional): If True, prints warnings and errors. Defaults to False.
+        max_workers (int, optional): The maximum number of workers to use. Defaults to the number of CPU cores.
+        orient_toward_target (bool, optional): If True, orients the graph toward the target. Defaults to True.
+
+    Returns:
+        Problem: The problem instance with the discovery results added.
+    """
     if max_workers is None:
         max_workers = cpu_count()
-
+    
     models = applyable_models(problem)
-
+    
     discovery_results = {models[i].__name__: None for i in range(len(models))}
     pool_args = [(problem, model, verbose, orient_toward_target) for model in models]
-
+    
     with ProcessPool(max_workers=max_workers) as pool:
         future = pool.map(_run_discover_with_model_task, pool_args, timeout=max_seconds_model)
-
+        
         iterator = future.result()
-
+        
         while True:
             try:
                 result = next(iterator)
@@ -151,5 +193,5 @@ def discover_with_all_models(
                 print("Function raised %s" % error)
                 print(error.traceback)
                 # raise error
-
+                
     return replace(problem, discovery_results=discovery_results)

@@ -4,6 +4,13 @@ from typing import List, Tuple
 
 @dataclass
 class Knowledge:
+    """
+    A class to represent the knowledge of required and forbidden edges in a causal graph.
+
+    Attributes:
+        required_edges (List[Tuple[str, str]]): A list of tuples representing the required edges.
+        forbidden_edges (List[Tuple[str, str]]): A list of tuples representing the forbidden edges.
+    """
     required_edges: List[Tuple[str, str]] = field(default_factory=list)
     forbidden_edges: List[Tuple[str, str]] = field(default_factory=list)
 
@@ -12,6 +19,16 @@ class Knowledge:
         self._validate_edges(self.forbidden_edges, "forbidden_edges")
 
     def _validate_edges(self, edges: List[Tuple[str, str]], attribute_name: str):
+        """
+        Validates that the edges are tuples of two strings.
+
+        Args:
+            edges (List[Tuple[str, str]]): The list of edges to validate.
+            attribute_name (str): The name of the attribute being validated.
+
+        Raises:
+            ValueError: If any edge is not a tuple of two strings.
+        """
         if not all(
             isinstance(edge, tuple) and len(edge) == 2 and all(isinstance(node, str) for node in edge) for edge in edges
         ):
@@ -19,6 +36,18 @@ class Knowledge:
 
 
 def parse_knowledge_file(file_path: str) -> Knowledge:
+    """
+    Parses a knowledge file to extract required and forbidden edges.
+
+    Args:
+        file_path (str): The path to the knowledge file.
+
+    Returns:
+        Knowledge: An instance of the Knowledge class containing the parsed edges.
+
+    Raises:
+        ValueError: If the file format is incorrect.
+    """
     required_edges = set()
     forbidden_edges = set()
     temporal_tiers = {}

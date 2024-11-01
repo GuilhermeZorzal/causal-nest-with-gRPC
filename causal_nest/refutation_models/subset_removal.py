@@ -6,7 +6,29 @@ from causal_nest.results import EstimationResult, RefutationResult
 
 
 class SubsetRemoval(RefutationMethodModel):
+    """
+    Class for subset removal refutation method.
+
+    This class implements the subset removal method for refuting causal estimates.
+    It inherits from the RefutationMethodModel base class and overrides the refute_estimate method
+    to provide the specific implementation for subset removal.
+
+    Attributes:
+        None
+    """
+
     def refute_estimate(self, dataset: Dataset, estimation_result: EstimationResult, **kwargs):
+        """
+        Refutes the estimate using subset removal.
+
+        Args:
+            dataset (Dataset): The dataset to use for refutation.
+            estimation_result (EstimationResult): The estimation result to refute.
+            **kwargs: Additional arguments for refutation.
+
+        Returns:
+            RefutationResult: The result of the refutation.
+        """
         model = CausalModel(data=dataset.data, outcome=dataset.target, treatment=estimation_result.treatment)
 
         r = model.refute_estimate(

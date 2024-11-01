@@ -15,6 +15,17 @@ known_methods = [PlaceboPermute, RandomCommonCause, SubsetRemoval]
 
 
 def refute_with_model(problem: Problem, estimation_result: EstimationResult, model: RefutationMethodModel):
+    """
+    Refutes an estimation result using the specified refutation model.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset.
+        estimation_result (EstimationResult): The estimation result to be refuted.
+        model (RefutationMethodModel): The refutation model to use.
+
+    Returns:
+        RefutationResult: The result of the refutation process, including runtime.
+    """
     start = timer()
     m = model()
     result = m.refute_estimate(problem.dataset, estimation_result)
@@ -26,6 +37,17 @@ def refute_with_model(problem: Problem, estimation_result: EstimationResult, mod
 
 
 def refute_estimation(problem: Problem, er: EstimationResult, timeout: int = 180):
+    """
+    Refutes an estimation result using all known refutation models within a given timeout.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset.
+        er (EstimationResult): The estimation result to be refuted.
+        timeout (int, optional): The maximum time allowed for the refutation process. Defaults to 180 seconds.
+
+    Returns:
+        dict: A dictionary containing the model name and the refutation results.
+    """
     response = {"model": er.model, "results": []}
     start_time = time.time()
 
@@ -47,6 +69,19 @@ def refute_all_results(
     verbose: bool = False,
     max_workers=None,
 ):
+    """
+    Refutes all estimation results using all known refutation models within given time constraints.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset and estimation results.
+        max_seconds_global (int, optional): The maximum time allowed for the global refutation process. Defaults to 180 seconds.
+        max_seconds_model (int, optional): The maximum time allowed for each model's refutation process. Defaults to 25 seconds.
+        verbose (bool, optional): If True, prints warnings and errors. Defaults to False.
+        max_workers (int, optional): The maximum number of workers to use. Defaults to the number of CPU cores.
+
+    Returns:
+        Problem: The problem instance with the refutation results added.
+    """
     sorted_results = list(
         sorted(
             filter(lambda x: x, [item for sublist in problem.estimation_results.values() for item in sublist]),

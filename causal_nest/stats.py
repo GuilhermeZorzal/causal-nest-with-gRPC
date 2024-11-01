@@ -6,19 +6,59 @@ from causal_nest.knowledge import Knowledge
 
 
 def calculate_auc_pr(graph_1: DiGraph, graph_2: DiGraph) -> float:
+    """
+    Calculates the Area Under the Precision-Recall Curve (AUC-PR) between two graphs.
+
+    Args:
+        graph_1 (DiGraph): The first directed graph.
+        graph_2 (DiGraph): The second directed graph.
+
+    Returns:
+        float: The AUC-PR value.
+    """
     auc_pr, _curve = precision_recall(graph_1, graph_2)
     return auc_pr
 
 
 def calculate_shd(graph_1: DiGraph, graph_2: DiGraph) -> float:
+    """
+    Calculates the Structural Hamming Distance (SHD) between two graphs.
+
+    Args:
+        graph_1 (DiGraph): The first directed graph.
+        graph_2 (DiGraph): The second directed graph.
+
+    Returns:
+        float: The SHD value.
+    """
     return SHD(graph_1, graph_2, double_for_anticausal=False)
 
 
 def calculate_sid(graph_1: DiGraph, graph_2: DiGraph) -> float:
+    """
+    Calculates the Structural Intervention Distance (SID) between two graphs.
+
+    Args:
+        graph_1 (DiGraph): The first directed graph.
+        graph_2 (DiGraph): The second directed graph.
+
+    Returns:
+        float: The SID value.
+    """
     return SID(graph_1, graph_2)
 
 
 def calculate_graph_ranking_score(graph: DiGraph, target: str) -> float:
+    """
+    Calculates a ranking score for the graph based on various metrics.
+
+    Args:
+        graph (nx.DiGraph): The directed graph to evaluate.
+        target (str): The target node in the graph.
+
+    Returns:
+        float: The calculated ranking score.
+    """
     # Score 0 para grafos sem o alvo
     if target not in graph.nodes():
         return 0
@@ -62,6 +102,16 @@ def calculate_graph_ranking_score(graph: DiGraph, target: str) -> float:
 
 
 def forbidden_edges_violation_rate(graph: nx.DiGraph, knowledge: Knowledge) -> float:
+    """
+    Calculates the rate of forbidden edges violations in the graph.
+
+    Args:
+        graph (nx.DiGraph): The directed graph to evaluate.
+        knowledge (Knowledge): The knowledge instance containing forbidden edges.
+
+    Returns:
+        float: The rate of forbidden edges violations.
+    """
     if len(knowledge.forbidden_edges) == 0:
         return 0.0
 
@@ -70,6 +120,16 @@ def forbidden_edges_violation_rate(graph: nx.DiGraph, knowledge: Knowledge) -> f
 
 
 def required_edges_compliance_rate(graph: nx.DiGraph, knowledge: Knowledge) -> float:
+    """
+    Calculates the compliance rate of required edges in the graph.
+
+    Args:
+        graph (nx.DiGraph): The directed graph to evaluate.
+        knowledge (Knowledge): The knowledge instance containing required edges.
+
+    Returns:
+        float: The compliance rate of required edges.
+    """
     if len(knowledge.required_edges) == 0:
         return 1.0
 
@@ -78,4 +138,14 @@ def required_edges_compliance_rate(graph: nx.DiGraph, knowledge: Knowledge) -> f
 
 
 def graph_integrity_score(violation_rate: float, compliance_rate: float) -> float:
+    """
+    Calculates the integrity score of the graph based on violation and compliance rates.
+
+    Args:
+        violation_rate (float): The rate of forbidden edges violations.
+        compliance_rate (float): The compliance rate of required edges.
+
+    Returns:
+        float: The calculated integrity score.
+    """
     return (1 - violation_rate) * compliance_rate

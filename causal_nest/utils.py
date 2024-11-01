@@ -1,11 +1,22 @@
 from copy import deepcopy
-from typing import List, Optional, Tuple
 
 import networkx as nx
 from networkx.drawing.nx_pydot import to_pydot
 
 
 def graph_to_pydot_string(graph: nx.DiGraph):
+    """
+    Converts a NetworkX directed graph to a Pydot string representation.
+
+    This function takes a NetworkX directed graph and converts it to a string representation
+    in the Pydot format, which can be used for visualization or further processing.
+
+    Args:
+        graph (nx.DiGraph): The NetworkX directed graph to convert.
+
+    Returns:
+        str: The Pydot string representation of the graph.
+    """
     return to_pydot(graph).to_string()
 
 

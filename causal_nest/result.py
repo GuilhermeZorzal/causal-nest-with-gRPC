@@ -18,6 +18,16 @@ colors = {
 
 
 def get_node_style(estimate_value: int, refutations: List[EstimationResult]):
+    """
+    Determines the style of a node based on the estimate value and refutation results.
+
+    Args:
+        estimate_value (int): The estimated value of the node.
+        refutations (List[EstimationResult]): A list of refutation results.
+
+    Returns:
+        Dict[str, str]: A dictionary containing the style attributes for the node.
+    """
     passed_amount = len(list(filter(lambda x: x.passed == True, refutations)))
     passed_rate = 0
     if len(refutations) > 0:
@@ -51,6 +61,17 @@ def generate_result_graph(
     problem: Problem,
     layout_option: str = None,
 ):
+    """
+    Generates a result graph based on the discovery result and problem instance.
+
+    Args:
+        dr (DiscoveryResult): The discovery result containing the causal graph.
+        problem (Problem): The problem instance containing the dataset.
+        layout_option (str, optional): The layout option for the graph visualization. Defaults to None.
+
+    Returns:
+        Any: The generated graph object.
+    """
     features = [n for n in dr.output_graph.nodes()]
     estimates = {f: None for f in features}
     refutations = {f: [] for f in features}
@@ -115,6 +136,17 @@ def generate_result_graph(
 
 
 def generate_all_results(problem: Problem, layout_option=None):
+    """
+    Generates a result graph based on the discovery result and problem instance.
+
+    Args:
+        dr (DiscoveryResult): The discovery result containing the causal graph.
+        problem (Problem): The problem instance containing the dataset.
+        layout_option (str, optional): The layout option for the graph visualization. Defaults to None.
+
+    Returns:
+        Any: The generated graph object.
+    """
     return {
         model: (generate_result_graph(dr, problem, layout_option) if dr is not None else None)
         for model, dr in problem.discovery_results.items()

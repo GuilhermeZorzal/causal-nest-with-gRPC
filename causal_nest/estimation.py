@@ -2,7 +2,6 @@ import time
 from concurrent.futures import TimeoutError
 from dataclasses import replace
 from multiprocessing import cpu_count
-from typing import Dict
 
 from dowhy import CausalModel
 from pebble import ProcessPool
@@ -13,6 +12,18 @@ from causal_nest.utils import graph_to_pydot_string
 
 
 def estimate_model_effects(problem: Problem, dr: DiscoveryResult, timeout: int = 180):
+    """
+    Estimates the causal effects for all features in the dataset using the discovered model.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset.
+        dr (DiscoveryResult): The discovery result containing the causal graph.
+        timeout (int, optional): The maximum time allowed for the estimation process. Defaults to 180 seconds.
+
+    Returns:
+        dict: A dictionary containing the model name and the estimation results for each feature.
+    """
+
     response = {"model": dr.model, "results": []}
     start_time = time.time()
 
@@ -28,6 +39,21 @@ def estimate_model_effects(problem: Problem, dr: DiscoveryResult, timeout: int =
 
 
 def estimate_effect(problem: Problem, dr: DiscoveryResult, treatment: str) -> EstimationResult:
+    """
+    Estimates the causal effect of a treatment on the outcome using the discovered model.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset.
+        dr (DiscoveryResult): The discovery result containing the causal graph.
+        treatment (str): The treatment variable for which to estimate the causal effect.
+
+    Returns:
+        EstimationResult: The result of the estimation process, including the estimand and p-value.
+
+    Raises:
+        ValueError: If the treatment variable does not exist in the dataset.
+    """
+
     if treatment not in problem.dataset.data.columns:
         raise ValueError("Argument 'treatment' must exist in the dataframe")
 
@@ -64,6 +90,19 @@ def estimate_all_effects(
     verbose: bool = False,
     max_workers=None,
 ):
+    """
+    Estimates the causal effects for all features in the dataset using all discovered models.
+
+    Args:
+        problem (Problem): The problem instance containing the dataset and discovery results.
+        max_seconds_model (int, optional): The maximum time allowed for each model's estimation process. Defaults to 360 seconds.
+        verbose (bool, optional): If True, prints warnings and errors. Defaults to False.
+        max_workers (int, optional): The maximum number of workers to use. Defaults to the number of CPU cores.
+
+    Returns:
+        Problem: The problem instance with the estimation results added.
+    """
+
     sorted_results = list(
         sorted(filter(lambda x: x, problem.discovery_results.values()), key=lambda x: x.priority_score, reverse=True)
     )

@@ -13,31 +13,34 @@ class Problem:
     """
     Data structure to represent a problem.
 
-    A problem is the starting point to causality. It contains all the required data and configurations to a causal pipeline.
+    A problem is the starting point to causality. It contains all the required data and configurations
+    for a causal pipeline.
+
+    Attributes:
+        dataset (Dataset): The dataset setup for this problem. Multiple problems may be used with the same dataset.
+        description (str): A quick description of this problem, useful for distinguishing between problems in benchmarks.
+        ground_truth (Optional[nx.DiGraph]): A graph containing the ground truth for the problem.
+        knowledge (Knowledge): Set of required and forbidden edges, which will be evaluated later to prioritize edges while dagifying and shown.
+        discovery_results (Optional[Dict[str, DiscoveryResult]]): Map of discovery results. The key is the discovery method name and the value is the result.
+        estimation_results (Optional[Dict[str, List[EstimationResult]]]): Map of estimation results. The key is the discovery method name and the value is the list of feature estimations.
+        refutation_results (Optional[Dict[str, List[RefutationResult]]]): Map of refutation results. The key is the discovery method name and the value is the list of feature refutations.
     """
 
     dataset: Dataset
-    """The dataset setup for this problem. Multiple problems may be used with the same dataset."""
-
     description: str = ""
-    """A quick description to this problem as it may be overwhelming to determine which exact problem is which in benchmarks"""
-
     ground_truth: Optional[nx.DiGraph] = None
-    """A graph containing the ground truth to a problem"""
-
     knowledge: Knowledge = field(default_factory=Knowledge)
-    """Set of required and forbidden edges, which will be evluated later on to prioritize edges while dagifying and shown"""
-
     discovery_results: Optional[Dict[str, DiscoveryResult]] = None
-    """Map of discovery results. The key is the discovery method name and the value is the result"""
-
     estimation_results: Optional[Dict[str, List[EstimationResult]]] = None
-    """Map of estimation results. The key is the discovery method name and the value is the list of features estimations"""
-
     refutation_results: Optional[Dict[str, List[RefutationResult]]] = None
-    """Map of estimation results. The key is the discovery method name and the value is the list of features refutations"""
 
     def __post_init__(self):
+        """
+        Post-initialization processing to validate the fields.
+
+        Raises:
+            ValueError: If 'dataset' is not an instance of `Dataset` or 'knowledge' is not an instance of `Knowledge`.
+        """
         if not isinstance(self.dataset, Dataset):
             raise ValueError("Field 'dataset' must be a CausalNest `Dataset` instance")
         if not isinstance(self.knowledge, Knowledge):
