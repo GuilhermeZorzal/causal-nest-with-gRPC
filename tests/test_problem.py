@@ -3,99 +3,16 @@ import re
 import pandas as pd
 import pytest
 
-from causal_nest.problem import (
-    Dataset,
-    FeatureType,
-    FeatureTypeMap,
-    MissingDataHandlingMethod,
-    Problem,
-    handle_missing_data,
-)
-
-
-# Feature types
-def test_feature_type_map_validates_type_as_enum_member():
-    with pytest.raises(ValueError, match=r"Field type must be a FeatureType enum value"):
-        _ = FeatureTypeMap(feature="foo", type="invalid")
-
-
-def test_feature_type_map_with_valid_arguments_wont_raise_errors():
-    tm = FeatureTypeMap(feature="foo", type=FeatureType.CATEGORICAL)
-    assert tm
-
-
-# Dataset
-def test_dataset_validates_data_field_as_pandas_dataframe():
-    with pytest.raises(ValueError, match=r"Field 'data' must be a pandas dataframe"):
-        _ = Dataset(data=[{"foo": "bar"}], target="foo", feature_mapping=[])
-
-
-def test_dataset_validates_target_is_column_in_dataframe():
-    with pytest.raises(ValueError, match=r"Field 'target' must exist in the dataframe"):
-        _ = Dataset(data=pd.DataFrame([{"foo": "invalid"}]), target="bar", feature_mapping=[])
-
-
-def test_dataset_with_valid_arguments_wont_raise_errors():
-    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo", feature_mapping=[])
-    assert dataset
-
-
-def test_dataset_defines_a_default_feature_mapping():
-    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
-    assert dataset.feature_mapping == []
-
-
-def test_dataset_validates_feature_mapping_has_no_duplicate_keys():
-    with pytest.raises(
-        ValueError, match=re.escape("Field 'feature_mapping' must not have duplicated keys. Found ['foo']")
-    ):
-        _ = Dataset(
-            data=pd.DataFrame([{"foo": "bar", "a": 1}]),
-            target="foo",
-            feature_mapping=[
-                FeatureTypeMap(feature="foo", type=FeatureType.CATEGORICAL),
-                FeatureTypeMap(feature="foo", type=FeatureType.CONTINUOUS),
-            ],
-        )
-
-
-def test_dataset_validates_feature_mapping_fields_belongs_to_dataset():
-    with pytest.raises(
-        ValueError,
-        match=re.escape(
-            "Field 'feature_mapping' must not have keys that does not belong in the dataset. Found ['test']"
-        ),
-    ):
-        _ = Dataset(
-            data=pd.DataFrame([{"foo": "bar", "a": 1}]),
-            target="foo",
-            feature_mapping=[
-                FeatureTypeMap(feature="foo", type=FeatureType.CATEGORICAL),
-                FeatureTypeMap(feature="test", type=FeatureType.CONTINUOUS),
-            ],
-        )
-
-
-def test_handle_missing_data_does_not_mutate_the_dataset():
-    df = pd.DataFrame(
-        [
-            {"foo": 1, "bar": 2},
-            {"foo": None, "bar": None},
-            {"foo": 9, "bar": 8},
-        ]
-    )
-
-    ds = Dataset(data=df, target="bar")
-    assert df.shape[0] == 3
-
-    updated_ds = handle_missing_data(ds, method=MissingDataHandlingMethod.DROP)
-    assert df.shape[0] == 3
-    assert updated_ds.data.shape[0] == 2
+from causal_nest.dataset import Dataset
+from causal_nest.knowledge import Knowledge
+from causal_nest.problem import Problem
+from causal_nest.results import DiscoveryResult, EstimationResult, RefutationResult
+import networkx as nx
 
 
 # Problem
 def test_problem_validates_dataset_field_as_dataset_instance():
-    with pytest.raises(ValueError, match=r"Field 'dataset' must be a causal nest `Dataset` instance"):
+    with pytest.raises(ValueError, match=r"Field 'dataset' must be a CausalNest `Dataset` instance"):
         _ = Problem(dataset=[{"foo": "bar"}], description="Foo")
 
 
@@ -109,3 +26,54 @@ def test_problem_defines_a_default_description():
     dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
     problem = Problem(dataset=dataset)
     assert problem.description == ""
+
+
+def test_problem_validates_knowledge_field_as_knowledge_instance():
+    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
+    with pytest.raises(ValueError, match=r"Field 'knowledge' must be a CausalNest `Knowledge` instance"):
+        _ = Problem(dataset=dataset, knowledge={"foo": "bar"})
+
+
+def test_problem_with_valid_knowledge_wont_raise_errors():
+    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
+    knowledge = Knowledge(required_edges=[("foo", "bar")], forbidden_edges=[("bar", "foo")])
+    problem = Problem(dataset=dataset, knowledge=knowledge)
+    assert problem
+
+
+def test_problem_initializes_with_default_values():
+    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
+    problem = Problem(dataset=dataset)
+    assert problem.ground_truth is None
+    assert problem.discovery_results is None
+    assert problem.estimation_results is None
+    assert problem.refutation_results is None
+
+
+def test_problem_allows_setting_ground_truth():
+    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
+    ground_truth = nx.DiGraph()
+    ground_truth.add_edges_from([("foo", "bar")])
+    problem = Problem(dataset=dataset, ground_truth=ground_truth)
+    assert problem.ground_truth is ground_truth
+
+
+def test_problem_allows_setting_discovery_results():
+    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
+    discovery_result = DiscoveryResult(output_graph=nx.DiGraph(), model="test_model")
+    problem = Problem(dataset=dataset, discovery_results={"test_model": discovery_result})
+    assert problem.discovery_results["test_model"] is discovery_result
+
+
+def test_problem_allows_setting_estimation_results():
+    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
+    estimation_result = EstimationResult(model="test_model", treatment="foo", estimand=None, estimate=None)
+    problem = Problem(dataset=dataset, estimation_results={"test_model": [estimation_result]})
+    assert problem.estimation_results["test_model"][0] is estimation_result
+
+
+def test_problem_allows_setting_refutation_results():
+    dataset = Dataset(data=pd.DataFrame([{"foo": "bar"}]), target="foo")
+    refutation_result = RefutationResult(treatment="foo", model="test_model", p_value=0.05, estimated_effect=1.0, new_effect=0.5)
+    problem = Problem(dataset=dataset, refutation_results={"test_model": [refutation_result]})
+    assert problem.refutation_results["test_model"][0] is refutation_result

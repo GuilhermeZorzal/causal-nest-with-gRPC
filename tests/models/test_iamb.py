@@ -7,12 +7,12 @@ import pytest
 from networkx import DiGraph
 
 from causal_nest.discovery_models import IAMB
-from causal_nest.problem import Dataset, FeatureType, FeatureTypeMap
+from causal_nest.dataset import Dataset, FeatureType, FeatureTypeMap
 
 
 # Is method allowed
 def test_is_method_allowed_validates_dataset_as_cn_instance():
-    with pytest.raises(ValueError, match=r"Field 'dataset' must be a causal nest `Dataset` instance"):
+    with pytest.raises(ValueError, match=r"Field 'dataset' must be a CausalNest `Dataset` instance"):
         c = IAMB()
         c.is_method_allowed([1, 2, 3])
 
@@ -90,7 +90,7 @@ def test_is_method_allowed_returns_true_with_valid_input():
 
 # Create graph from data
 def test_create_graph_from_data_validates_dataset_as_cn_instance():
-    with pytest.raises(ValueError, match=r"Field 'dataset' must be a causal nest `Dataset` instance"):
+    with pytest.raises(ValueError, match=r"Field 'dataset' must be a CausalNest `Dataset` instance"):
         c = IAMB()
         c.create_graph_from_data([1, 2, 3])
 

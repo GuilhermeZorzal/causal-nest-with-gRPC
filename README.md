@@ -3,5 +3,5 @@ A nest of causal tools for building a full causal pipeline: from data treating, 
 
 ### Commands
 - Install: `poetry install` 
-- Test: `poetry test` 
+- Test: `poetry run poe test` 
 - Format: `poetry run poe format` 

@@ -7,12 +7,12 @@ import pytest
 from networkx import DiGraph
 
 from causal_nest.discovery_models import CAM
-from causal_nest.problem import Dataset, FeatureType, FeatureTypeMap
+from causal_nest.dataset import Dataset, FeatureType, FeatureTypeMap
 
 
 # Is method allowed
 def test_is_method_allowed_validates_dataset_as_cn_instance():
-    with pytest.raises(ValueError, match=r"Field 'dataset' must be a causal nest `Dataset` instance"):
+    with pytest.raises(ValueError, match=r"Field 'dataset' must be a CausalNest `Dataset` instance"):
         c = CAM()
         c.is_method_allowed([1, 2, 3])
 
@@ -90,7 +90,7 @@ def test_is_method_allowed_returns_true_with_valid_input():
 
 # Create graph from data
 def test_create_graph_from_data_validates_dataset_as_cn_instance():
-    with pytest.raises(ValueError, match=r"Field 'dataset' must be a causal nest `Dataset` instance"):
+    with pytest.raises(ValueError, match=r"Field 'dataset' must be a CausalNest `Dataset` instance"):
         c = CAM()
         c.create_graph_from_data([1, 2, 3])
 
@@ -115,14 +115,18 @@ def test_create_graph_from_data_validates_method_is_allowed():
 
 
 def test_create_graph_from_data_generates_valid_graph_with_valid_input():
-    df = pd.DataFrame(data=np.random.normal(0, 5, size=(100, 3)), columns=["foo", "bar", "test"])
+    df = pd.DataFrame({
+        'A': [1, 2, 3, 4, 5, 1, 2, 3, 4, 8],
+        'B': [5, 4, 3, 2, 1, 5, 4, 3, 2, 1],
+        'C': [2, 3, 4, 5, 6, 3, 4, 5, 6, 7]
+    })
 
     dataset = Dataset(
         data=df,
-        target="test",
+        target="C",
         feature_mapping=[
-            FeatureTypeMap(feature="foo", type=FeatureType.CONTINUOUS),
-            FeatureTypeMap(feature="bar", type=FeatureType.CONTINUOUS),
+            FeatureTypeMap(feature="A", type=FeatureType.CONTINUOUS),
+            FeatureTypeMap(feature="B", type=FeatureType.CONTINUOUS),
         ],
     )
 
