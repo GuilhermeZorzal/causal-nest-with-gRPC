@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+service SerializerService {
+  // Datasets
+  rpc handle_missing_data_grpc(MissingDataRequest) returns (DatasetResponse);
+  rpc applyable_models_grpc(ProblemRequest) returns (ModelsResponse);
+
+  // Discovery
+  rpc discover_with_all_models_grpc(DiscoverWithAllModelsRequest) returns (ProblemResponse);
+
+  // Estimation
+  rpc estimate_all_effects_grpc(EstimateAllEffectsRequest) returns (ProblemResponse);
+
+  // Refutation
+  rpc refute_all_results_grpc(RefuteAllResultsRequest) returns (ProblemResponse);
+
+  // Results
+  rpc generate_all_results_grpc(GenerateAllResultsRequest) returns (GraphStringResponse);
+}
+
+// -------------------------
+// Common Messages
+
+message ProblemRequest {
+  bytes problem = 1;
+}
+
+message ProblemResponse {
+  bytes problem = 1;
+}
+
+// -------------------------
+// Datasets
+
+message MissingDataRequest {
+  bytes dataset = 1;
+  bytes missing_data_handling_method = 2;
+}
+
+message DatasetResponse {
+  bytes dataset = 1;
+}
+
+message ModelsResponse {
+  bytes model_names = 1;
+}
+
+// -------------------------
+// Discovery
+
+message DiscoverWithAllModelsRequest {
+  bytes problem = 1;
+  int32 max_seconds_model = 2;
+  bool verbose = 3;
+  int32 max_workers = 4;
+  bool orient_toward_target = 5;
+}
+
+// -------------------------
+// Estimation
+
+message EstimateAllEffectsRequest {
+  bytes problem = 1;
+  int32 max_seconds_model = 2;
+  bool verbose = 3;
+  int32 max_workers = 4;
+}
+
+// -------------------------
+// Refutation
+
+message RefuteAllResultsRequest {
+  bytes problem = 1;
+  int32 max_seconds_global = 2;
+  int32 max_seconds_model = 3;
+  bool verbose = 4;
+  int32 max_workers = 5;
+}
+
+// -------------------------
+// Results
+
+message GenerateAllResultsRequest {
+  bytes problem = 1;
+  string layout_option = 2;
+}
+
+message GraphStringResponse {
+  string graph_string = 1;
+}

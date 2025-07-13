@@ -4,8 +4,8 @@ FROM python:3.9-buster as base
 # COMMENTING EVERITHING TO MAKE CONTAINER LIGHTER. THE IMPORTANT NOW IS TO TEST IF THE GRPC WORKS
 # FROM HERE =====================================================================================
 
-# ENV DEBIAN_FRONTEND noninteractive
-# RUN apt-get -qq update
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get -qq update
 # RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 # RUN apt-get -qq install dialog apt-utils -y
 # RUN apt-get install apt-transport-https -y
@@ -56,25 +56,21 @@ FROM python:3.9-buster as base
 # # Custom below
 # RUN apt-get install graphviz -y
 # # RUN curl -sSL https://install.python-poetry.org | python3 -
-# RUN pip install poetry
-#
 # TO HERE =====================================================================================
-# Installing grpc dependencies
-#
-RUN pip install grpcio
-RUN pip install grpcio-tools
+RUN pip install poetry
 
 RUN mkdir -p /app
 
 COPY . /app
 WORKDIR /app
-
-# ENV PATH="${PATH}:$HOME/.local/bin"
+ENV PYTHONPATH=/app
+ENV PATH="${PATH}:$HOME/.local/bin"
 
 # HERE ALSO ====================================================================================
-# RUN poetry env use python3.9
-# RUN poetry install
+RUN poetry lock
+RUN poetry env use python3.9
+RUN poetry install
 
 WORKDIR /app
 
-CMD ["python3", "src/server.py"]
+CMD ["python3"]

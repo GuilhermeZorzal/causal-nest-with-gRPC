@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   causal-nest:
     image: gfviegas/causal-nest
@@ -12,6 +10,11 @@ services:
       - "8082:8082"
       - "8083:8083"
       - "8084:8084"
+      - "5555:5555"
+    tty: true
     volumes:
       - ./:/app
-    command: "poetry run jupyter notebook --no-browser --ip 0.0.0.0 --port 8080 --allow-root"
+    # command: "poetry run jupyter notebook --no-browser --ip 0.0.0.0 --port 8080 --allow-root"
+    command: "poetry run python3 grpc_interface/server.py"
+    # command: "python -m grpc_interface.server"
+

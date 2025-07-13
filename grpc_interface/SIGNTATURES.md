@@ -3,13 +3,16 @@
 ```python
 # Datasets
 def handle_missing_data(dataset: Dataset, method: MissingDataHandlingMethod = MissingDataHandlingMethod.DROP):
+return dataset: Dataset
 
 def applyable_models(problem: Problem):
+return List[str]
 
 # Discovery
 def discover_with_model(
     problem: Problem, model: DiscoveryMethodModel, verbose: bool = False, orient_toward_target: bool = True
 ):
+return DiscoveryResult
 
 def discover_with_all_models(
     problem: Problem,
@@ -18,9 +21,11 @@ def discover_with_all_models(
     max_workers: int = None,
     orient_toward_target: bool = True,
 ):
+return Problem
 
 # Estimation
 def estimate_model_effects(problem: Problem, dr: DiscoveryResult, timeout: int = 180):
+  return EstimationResult
 
 def estimate_all_effects(
     problem: Problem,
@@ -28,9 +33,11 @@ def estimate_all_effects(
     verbose: bool = False,
     max_workers=None,
 ):
+return Problem
 
 # Refutation
 def refute_with_model(problem: Problem, estimation_result: EstimationResult, model: RefutationMethodModel):
+return RefutationResult
 
 def refute_all_results(
     problem: Problem,
@@ -39,6 +46,7 @@ def refute_all_results(
     verbose: bool = False,
     max_workers=None,
 ):
+return Problem
 
 
 # Knowledge
@@ -51,5 +59,8 @@ def generate_result_graph(
     problem: Problem,
     layout_option: str = None,
 ):
+
+return str
 def generate_all_results(problem: Problem, layout_option=None):
+return str
 ```
