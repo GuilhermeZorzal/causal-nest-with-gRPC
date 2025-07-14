@@ -1,4 +1,6 @@
-FROM python:3.9-buster as base
+# FROM python:3.9-buster as base
+# Changing base image due to discontinued support for buster
+FROM python:3.9 as base
 
 
 # COMMENTING EVERITHING TO MAKE CONTAINER LIGHTER. THE IMPORTANT NOW IS TO TEST IF THE GRPC WORKS

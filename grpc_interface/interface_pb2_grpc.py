@@ -34,6 +34,11 @@ class SerializerServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.testing_connection_grpc = channel.unary_unary(
+                '/SerializerService/testing_connection_grpc',
+                request_serializer=interface__pb2.ProblemRequest.SerializeToString,
+                response_deserializer=interface__pb2.ProblemResponse.FromString,
+                _registered_method=True)
         self.handle_missing_data_grpc = channel.unary_unary(
                 '/SerializerService/handle_missing_data_grpc',
                 request_serializer=interface__pb2.MissingDataRequest.SerializeToString,
@@ -68,6 +73,12 @@ class SerializerServiceStub(object):
 
 class SerializerServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def testing_connection_grpc(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def handle_missing_data_grpc(self, request, context):
         """Datasets
@@ -113,6 +124,11 @@ class SerializerServiceServicer(object):
 
 def add_SerializerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'testing_connection_grpc': grpc.unary_unary_rpc_method_handler(
+                    servicer.testing_connection_grpc,
+                    request_deserializer=interface__pb2.ProblemRequest.FromString,
+                    response_serializer=interface__pb2.ProblemResponse.SerializeToString,
+            ),
             'handle_missing_data_grpc': grpc.unary_unary_rpc_method_handler(
                     servicer.handle_missing_data_grpc,
                     request_deserializer=interface__pb2.MissingDataRequest.FromString,
@@ -153,6 +169,33 @@ def add_SerializerServiceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class SerializerService(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def testing_connection_grpc(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/SerializerService/testing_connection_grpc',
+            interface__pb2.ProblemRequest.SerializeToString,
+            interface__pb2.ProblemResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def handle_missing_data_grpc(request,

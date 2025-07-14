@@ -17,4 +17,10 @@ services:
     # command: "poetry run jupyter notebook --no-browser --ip 0.0.0.0 --port 8080 --allow-root"
     command: "poetry run python3 grpc_interface/server.py"
     # command: "python -m grpc_interface.server"
+    networks:
+      - network1
 
+networks:
+  network1:
+    name: ciw_backend_default
+    external: true

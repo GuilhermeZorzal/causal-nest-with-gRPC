@@ -1,6 +1,8 @@
 syntax = "proto3";
 
 service SerializerService {
+  rpc testing_connection_grpc(ProblemRequest) returns (ProblemResponse);
+
   // Datasets
   rpc handle_missing_data_grpc(MissingDataRequest) returns (DatasetResponse);
   rpc applyable_models_grpc(ProblemRequest) returns (ModelsResponse);

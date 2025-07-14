@@ -51,7 +51,12 @@ from causal_nest.result import (
 
 
 class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
+    def testing_connection_grpc(self, request, context):
+        print("testing_connection_grpc")
+        return interface_pb2.ProblemResponse(problem=pickle.dumps(request.problem))
+
     def handle_missing_data_grpc(self, request, context):
+        print("handle_missing_data_grpc")
         dataset: Dataset = pickle.loads(request.dataset)
         method: MissingDataHandlingMethod = pickle.loads(
             request.missing_data_handling_method
@@ -63,11 +68,13 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         return interface_pb2.DatasetResponse(dataset=pickle.dumps(result))
 
     def applyable_models_grpc(self, request, context):
+        print("applyable_models_grpc")
         problem: Problem = pickle.loads(request.problem)
         model_list = applyable_models(problem)
         return interface_pb2.ModelsResponse(model_names=pickle.dumps(model_list))
 
     def discover_with_all_models_grpc(self, request, context):
+        print("discover_with_all_models_grpc")
         problem = pickle.loads(request.problem)
         updated_problem = discover_with_all_models(
             problem,
@@ -79,6 +86,7 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def estimate_all_effects_grpc(self, request, context):
+        print("estimate_all_effects_grpc")
         problem = pickle.loads(request.problem)
         updated_problem = estimate_all_effects(
             problem,
@@ -89,6 +97,7 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def refute_all_results_grpc(self, request, context):
+        print("refute_all_results_grpc")
         problem = pickle.loads(request.problem)
         updated_problem = refute_all_results(
             problem,
@@ -100,6 +109,7 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def generate_all_results_grpc(self, request, context):
+        print("generate_all_results_grpc")
         problem = pickle.loads(request.problem)
         graph_string = generate_all_results(
             problem,
