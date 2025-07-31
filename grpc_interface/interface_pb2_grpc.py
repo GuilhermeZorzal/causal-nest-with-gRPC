@@ -49,20 +49,40 @@ class SerializerServiceStub(object):
                 request_serializer=interface__pb2.ProblemRequest.SerializeToString,
                 response_deserializer=interface__pb2.ModelsResponse.FromString,
                 _registered_method=True)
+        self.discover_with_model_grpc = channel.unary_unary(
+                '/SerializerService/discover_with_model_grpc',
+                request_serializer=interface__pb2.DiscoverWithModelRequest.SerializeToString,
+                response_deserializer=interface__pb2.DiscoveryResultResponse.FromString,
+                _registered_method=True)
         self.discover_with_all_models_grpc = channel.unary_unary(
                 '/SerializerService/discover_with_all_models_grpc',
                 request_serializer=interface__pb2.DiscoverWithAllModelsRequest.SerializeToString,
                 response_deserializer=interface__pb2.ProblemResponse.FromString,
+                _registered_method=True)
+        self.estimate_model_effects_grpc = channel.unary_unary(
+                '/SerializerService/estimate_model_effects_grpc',
+                request_serializer=interface__pb2.EstimateModelEffectsRequest.SerializeToString,
+                response_deserializer=interface__pb2.EstimationResultResponse.FromString,
                 _registered_method=True)
         self.estimate_all_effects_grpc = channel.unary_unary(
                 '/SerializerService/estimate_all_effects_grpc',
                 request_serializer=interface__pb2.EstimateAllEffectsRequest.SerializeToString,
                 response_deserializer=interface__pb2.ProblemResponse.FromString,
                 _registered_method=True)
+        self.refute_with_model_grpc = channel.unary_unary(
+                '/SerializerService/refute_with_model_grpc',
+                request_serializer=interface__pb2.RefuteWithModelRequest.SerializeToString,
+                response_deserializer=interface__pb2.RefutationResultResponse.FromString,
+                _registered_method=True)
         self.refute_all_results_grpc = channel.unary_unary(
                 '/SerializerService/refute_all_results_grpc',
                 request_serializer=interface__pb2.RefuteAllResultsRequest.SerializeToString,
                 response_deserializer=interface__pb2.ProblemResponse.FromString,
+                _registered_method=True)
+        self.generate_result_graph_grpc = channel.unary_unary(
+                '/SerializerService/generate_result_graph_grpc',
+                request_serializer=interface__pb2.GenerateResultGraphRequest.SerializeToString,
+                response_deserializer=interface__pb2.GraphStringResponse.FromString,
                 _registered_method=True)
         self.generate_all_results_grpc = channel.unary_unary(
                 '/SerializerService/generate_all_results_grpc',
@@ -93,30 +113,54 @@ class SerializerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def discover_with_all_models_grpc(self, request, context):
+    def discover_with_model_grpc(self, request, context):
         """Discovery
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def estimate_all_effects_grpc(self, request, context):
+    def discover_with_all_models_grpc(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def estimate_model_effects_grpc(self, request, context):
         """Estimation
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def refute_all_results_grpc(self, request, context):
+    def estimate_all_effects_grpc(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def refute_with_model_grpc(self, request, context):
         """Refutation
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def generate_all_results_grpc(self, request, context):
+    def refute_all_results_grpc(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def generate_result_graph_grpc(self, request, context):
         """Results
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def generate_all_results_grpc(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -139,20 +183,40 @@ def add_SerializerServiceServicer_to_server(servicer, server):
                     request_deserializer=interface__pb2.ProblemRequest.FromString,
                     response_serializer=interface__pb2.ModelsResponse.SerializeToString,
             ),
+            'discover_with_model_grpc': grpc.unary_unary_rpc_method_handler(
+                    servicer.discover_with_model_grpc,
+                    request_deserializer=interface__pb2.DiscoverWithModelRequest.FromString,
+                    response_serializer=interface__pb2.DiscoveryResultResponse.SerializeToString,
+            ),
             'discover_with_all_models_grpc': grpc.unary_unary_rpc_method_handler(
                     servicer.discover_with_all_models_grpc,
                     request_deserializer=interface__pb2.DiscoverWithAllModelsRequest.FromString,
                     response_serializer=interface__pb2.ProblemResponse.SerializeToString,
+            ),
+            'estimate_model_effects_grpc': grpc.unary_unary_rpc_method_handler(
+                    servicer.estimate_model_effects_grpc,
+                    request_deserializer=interface__pb2.EstimateModelEffectsRequest.FromString,
+                    response_serializer=interface__pb2.EstimationResultResponse.SerializeToString,
             ),
             'estimate_all_effects_grpc': grpc.unary_unary_rpc_method_handler(
                     servicer.estimate_all_effects_grpc,
                     request_deserializer=interface__pb2.EstimateAllEffectsRequest.FromString,
                     response_serializer=interface__pb2.ProblemResponse.SerializeToString,
             ),
+            'refute_with_model_grpc': grpc.unary_unary_rpc_method_handler(
+                    servicer.refute_with_model_grpc,
+                    request_deserializer=interface__pb2.RefuteWithModelRequest.FromString,
+                    response_serializer=interface__pb2.RefutationResultResponse.SerializeToString,
+            ),
             'refute_all_results_grpc': grpc.unary_unary_rpc_method_handler(
                     servicer.refute_all_results_grpc,
                     request_deserializer=interface__pb2.RefuteAllResultsRequest.FromString,
                     response_serializer=interface__pb2.ProblemResponse.SerializeToString,
+            ),
+            'generate_result_graph_grpc': grpc.unary_unary_rpc_method_handler(
+                    servicer.generate_result_graph_grpc,
+                    request_deserializer=interface__pb2.GenerateResultGraphRequest.FromString,
+                    response_serializer=interface__pb2.GraphStringResponse.SerializeToString,
             ),
             'generate_all_results_grpc': grpc.unary_unary_rpc_method_handler(
                     servicer.generate_all_results_grpc,
@@ -252,6 +316,33 @@ class SerializerService(object):
             _registered_method=True)
 
     @staticmethod
+    def discover_with_model_grpc(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/SerializerService/discover_with_model_grpc',
+            interface__pb2.DiscoverWithModelRequest.SerializeToString,
+            interface__pb2.DiscoveryResultResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
     def discover_with_all_models_grpc(request,
             target,
             options=(),
@@ -268,6 +359,33 @@ class SerializerService(object):
             '/SerializerService/discover_with_all_models_grpc',
             interface__pb2.DiscoverWithAllModelsRequest.SerializeToString,
             interface__pb2.ProblemResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def estimate_model_effects_grpc(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/SerializerService/estimate_model_effects_grpc',
+            interface__pb2.EstimateModelEffectsRequest.SerializeToString,
+            interface__pb2.EstimationResultResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -306,6 +424,33 @@ class SerializerService(object):
             _registered_method=True)
 
     @staticmethod
+    def refute_with_model_grpc(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/SerializerService/refute_with_model_grpc',
+            interface__pb2.RefuteWithModelRequest.SerializeToString,
+            interface__pb2.RefutationResultResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
     def refute_all_results_grpc(request,
             target,
             options=(),
@@ -322,6 +467,33 @@ class SerializerService(object):
             '/SerializerService/refute_all_results_grpc',
             interface__pb2.RefuteAllResultsRequest.SerializeToString,
             interface__pb2.ProblemResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def generate_result_graph_grpc(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/SerializerService/generate_result_graph_grpc',
+            interface__pb2.GenerateResultGraphRequest.SerializeToString,
+            interface__pb2.GraphStringResponse.FromString,
             options,
             channel_credentials,
             insecure,

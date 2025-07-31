@@ -24,33 +24,47 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0finterface.proto\"!\n\x0eProblemRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\"\"\n\x0fProblemResponse\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\"K\n\x12MissingDataRequest\x12\x0f\n\x07\x64\x61taset\x18\x01 \x01(\x0c\x12$\n\x1cmissing_data_handling_method\x18\x02 \x01(\x0c\"\"\n\x0f\x44\x61tasetResponse\x12\x0f\n\x07\x64\x61taset\x18\x01 \x01(\x0c\"%\n\x0eModelsResponse\x12\x13\n\x0bmodel_names\x18\x01 \x01(\x0c\"\x8e\x01\n\x1c\x44iscoverWithAllModelsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x19\n\x11max_seconds_model\x18\x02 \x01(\x05\x12\x0f\n\x07verbose\x18\x03 \x01(\x08\x12\x13\n\x0bmax_workers\x18\x04 \x01(\x05\x12\x1c\n\x14orient_toward_target\x18\x05 \x01(\x08\"m\n\x19\x45stimateAllEffectsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x19\n\x11max_seconds_model\x18\x02 \x01(\x05\x12\x0f\n\x07verbose\x18\x03 \x01(\x08\x12\x13\n\x0bmax_workers\x18\x04 \x01(\x05\"\x87\x01\n\x17RefuteAllResultsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x1a\n\x12max_seconds_global\x18\x02 \x01(\x05\x12\x19\n\x11max_seconds_model\x18\x03 \x01(\x05\x12\x0f\n\x07verbose\x18\x04 \x01(\x08\x12\x13\n\x0bmax_workers\x18\x05 \x01(\x05\"C\n\x19GenerateAllResultsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x15\n\rlayout_option\x18\x02 \x01(\t\"+\n\x13GraphStringResponse\x12\x14\n\x0cgraph_string\x18\x01 \x01(\t2\x82\x04\n\x11SerializerService\x12<\n\x17testing_connection_grpc\x12\x0f.ProblemRequest\x1a\x10.ProblemResponse\x12\x41\n\x18handle_missing_data_grpc\x12\x13.MissingDataRequest\x1a\x10.DatasetResponse\x12\x39\n\x15\x61pplyable_models_grpc\x12\x0f.ProblemRequest\x1a\x0f.ModelsResponse\x12P\n\x1d\x64iscover_with_all_models_grpc\x12\x1d.DiscoverWithAllModelsRequest\x1a\x10.ProblemResponse\x12I\n\x19\x65stimate_all_effects_grpc\x12\x1a.EstimateAllEffectsRequest\x1a\x10.ProblemResponse\x12\x45\n\x17refute_all_results_grpc\x12\x18.RefuteAllResultsRequest\x1a\x10.ProblemResponse\x12M\n\x19generate_all_results_grpc\x12\x1a.GenerateAllResultsRequest\x1a\x14.GraphStringResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0finterface.proto\"\"\n\x0fProblemResponse\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\"K\n\x12MissingDataRequest\x12\x0f\n\x07\x64\x61taset\x18\x01 \x01(\x0c\x12$\n\x1cmissing_data_handling_method\x18\x02 \x01(\x0c\"\"\n\x0f\x44\x61tasetResponse\x12\x0f\n\x07\x64\x61taset\x18\x01 \x01(\x0c\"!\n\x0eProblemRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\"%\n\x0eModelsResponse\x12\x13\n\x0bmodel_names\x18\x01 \x01(\x0c\"i\n\x18\x44iscoverWithModelRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\r\n\x05model\x18\x02 \x01(\t\x12\x0f\n\x07verbose\x18\x03 \x01(\x08\x12\x1c\n\x14orient_toward_target\x18\x04 \x01(\x08\"\x8e\x01\n\x1c\x44iscoverWithAllModelsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x19\n\x11max_seconds_model\x18\x02 \x01(\x05\x12\x0f\n\x07verbose\x18\x03 \x01(\x08\x12\x13\n\x0bmax_workers\x18\x04 \x01(\x05\x12\x1c\n\x14orient_toward_target\x18\x05 \x01(\x08\"3\n\x17\x44iscoveryResultResponse\x12\x18\n\x10\x64iscovery_result\x18\x01 \x01(\x0c\"m\n\x19\x45stimateAllEffectsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x19\n\x11max_seconds_model\x18\x02 \x01(\x05\x12\x0f\n\x07verbose\x18\x03 \x01(\x08\x12\x13\n\x0bmax_workers\x18\x04 \x01(\x05\"Y\n\x1b\x45stimateModelEffectsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x18\n\x10\x64iscovery_result\x18\x02 \x01(\x0c\x12\x0f\n\x07timeout\x18\x03 \x01(\x05\"5\n\x18\x45stimationResultResponse\x12\x19\n\x11\x65stimation_result\x18\x01 \x01(\x0c\"\x87\x01\n\x17RefuteAllResultsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x1a\n\x12max_seconds_global\x18\x02 \x01(\x05\x12\x19\n\x11max_seconds_model\x18\x03 \x01(\x05\x12\x0f\n\x07verbose\x18\x04 \x01(\x08\x12\x13\n\x0bmax_workers\x18\x05 \x01(\x05\"S\n\x16RefuteWithModelRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x19\n\x11\x65stimation_result\x18\x02 \x01(\x0c\x12\r\n\x05model\x18\x03 \x01(\t\"5\n\x18RefutationResultResponse\x12\x19\n\x11refutation_result\x18\x01 \x01(\x0c\"^\n\x1aGenerateResultGraphRequest\x12\x18\n\x10\x64iscovery_result\x18\x01 \x01(\x0c\x12\x0f\n\x07problem\x18\x02 \x01(\x0c\x12\x15\n\rlayout_option\x18\x03 \x01(\t\"C\n\x19GenerateAllResultsRequest\x12\x0f\n\x07problem\x18\x01 \x01(\x0c\x12\x15\n\rlayout_option\x18\x02 \x01(\t\"+\n\x13GraphStringResponse\x12\x14\n\x0cgraph_string\x18\x01 \x01(\t2\xca\x06\n\x11SerializerService\x12<\n\x17testing_connection_grpc\x12\x0f.ProblemRequest\x1a\x10.ProblemResponse\x12\x41\n\x18handle_missing_data_grpc\x12\x13.MissingDataRequest\x1a\x10.DatasetResponse\x12\x39\n\x15\x61pplyable_models_grpc\x12\x0f.ProblemRequest\x1a\x0f.ModelsResponse\x12O\n\x18\x64iscover_with_model_grpc\x12\x19.DiscoverWithModelRequest\x1a\x18.DiscoveryResultResponse\x12P\n\x1d\x64iscover_with_all_models_grpc\x12\x1d.DiscoverWithAllModelsRequest\x1a\x10.ProblemResponse\x12V\n\x1b\x65stimate_model_effects_grpc\x12\x1c.EstimateModelEffectsRequest\x1a\x19.EstimationResultResponse\x12I\n\x19\x65stimate_all_effects_grpc\x12\x1a.EstimateAllEffectsRequest\x1a\x10.ProblemResponse\x12L\n\x16refute_with_model_grpc\x12\x17.RefuteWithModelRequest\x1a\x19.RefutationResultResponse\x12\x45\n\x17refute_all_results_grpc\x12\x18.RefuteAllResultsRequest\x1a\x10.ProblemResponse\x12O\n\x1agenerate_result_graph_grpc\x12\x1b.GenerateResultGraphRequest\x1a\x14.GraphStringResponse\x12M\n\x19generate_all_results_grpc\x12\x1a.GenerateAllResultsRequest\x1a\x14.GraphStringResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'interface_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_PROBLEMREQUEST']._serialized_start=19
-  _globals['_PROBLEMREQUEST']._serialized_end=52
-  _globals['_PROBLEMRESPONSE']._serialized_start=54
-  _globals['_PROBLEMRESPONSE']._serialized_end=88
-  _globals['_MISSINGDATAREQUEST']._serialized_start=90
-  _globals['_MISSINGDATAREQUEST']._serialized_end=165
-  _globals['_DATASETRESPONSE']._serialized_start=167
-  _globals['_DATASETRESPONSE']._serialized_end=201
+  _globals['_PROBLEMRESPONSE']._serialized_start=19
+  _globals['_PROBLEMRESPONSE']._serialized_end=53
+  _globals['_MISSINGDATAREQUEST']._serialized_start=55
+  _globals['_MISSINGDATAREQUEST']._serialized_end=130
+  _globals['_DATASETRESPONSE']._serialized_start=132
+  _globals['_DATASETRESPONSE']._serialized_end=166
+  _globals['_PROBLEMREQUEST']._serialized_start=168
+  _globals['_PROBLEMREQUEST']._serialized_end=201
   _globals['_MODELSRESPONSE']._serialized_start=203
   _globals['_MODELSRESPONSE']._serialized_end=240
-  _globals['_DISCOVERWITHALLMODELSREQUEST']._serialized_start=243
-  _globals['_DISCOVERWITHALLMODELSREQUEST']._serialized_end=385
-  _globals['_ESTIMATEALLEFFECTSREQUEST']._serialized_start=387
-  _globals['_ESTIMATEALLEFFECTSREQUEST']._serialized_end=496
-  _globals['_REFUTEALLRESULTSREQUEST']._serialized_start=499
-  _globals['_REFUTEALLRESULTSREQUEST']._serialized_end=634
-  _globals['_GENERATEALLRESULTSREQUEST']._serialized_start=636
-  _globals['_GENERATEALLRESULTSREQUEST']._serialized_end=703
-  _globals['_GRAPHSTRINGRESPONSE']._serialized_start=705
-  _globals['_GRAPHSTRINGRESPONSE']._serialized_end=748
-  _globals['_SERIALIZERSERVICE']._serialized_start=751
-  _globals['_SERIALIZERSERVICE']._serialized_end=1265
+  _globals['_DISCOVERWITHMODELREQUEST']._serialized_start=242
+  _globals['_DISCOVERWITHMODELREQUEST']._serialized_end=347
+  _globals['_DISCOVERWITHALLMODELSREQUEST']._serialized_start=350
+  _globals['_DISCOVERWITHALLMODELSREQUEST']._serialized_end=492
+  _globals['_DISCOVERYRESULTRESPONSE']._serialized_start=494
+  _globals['_DISCOVERYRESULTRESPONSE']._serialized_end=545
+  _globals['_ESTIMATEALLEFFECTSREQUEST']._serialized_start=547
+  _globals['_ESTIMATEALLEFFECTSREQUEST']._serialized_end=656
+  _globals['_ESTIMATEMODELEFFECTSREQUEST']._serialized_start=658
+  _globals['_ESTIMATEMODELEFFECTSREQUEST']._serialized_end=747
+  _globals['_ESTIMATIONRESULTRESPONSE']._serialized_start=749
+  _globals['_ESTIMATIONRESULTRESPONSE']._serialized_end=802
+  _globals['_REFUTEALLRESULTSREQUEST']._serialized_start=805
+  _globals['_REFUTEALLRESULTSREQUEST']._serialized_end=940
+  _globals['_REFUTEWITHMODELREQUEST']._serialized_start=942
+  _globals['_REFUTEWITHMODELREQUEST']._serialized_end=1025
+  _globals['_REFUTATIONRESULTRESPONSE']._serialized_start=1027
+  _globals['_REFUTATIONRESULTRESPONSE']._serialized_end=1080
+  _globals['_GENERATERESULTGRAPHREQUEST']._serialized_start=1082
+  _globals['_GENERATERESULTGRAPHREQUEST']._serialized_end=1176
+  _globals['_GENERATEALLRESULTSREQUEST']._serialized_start=1178
+  _globals['_GENERATEALLRESULTSREQUEST']._serialized_end=1245
+  _globals['_GRAPHSTRINGRESPONSE']._serialized_start=1247
+  _globals['_GRAPHSTRINGRESPONSE']._serialized_end=1290
+  _globals['_SERIALIZERSERVICE']._serialized_start=1293
+  _globals['_SERIALIZERSERVICE']._serialized_end=2135
 # @@protoc_insertion_point(module_scope)

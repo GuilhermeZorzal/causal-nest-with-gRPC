@@ -101,3 +101,7 @@ graphviz_source.render(format='png')
 ```
 
 For more detailed examples and usage, please refer to the notebooks directory.
+
+# Fork specific inforation
+
+All the information about the forked repository can be found in the [grpc interface README](grpc_interface/README.md).
