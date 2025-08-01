@@ -19,6 +19,7 @@ from causal_nest.dataset import (
     FeatureTypeMap,
     MissingDataHandlingMethod,
     handle_missing_data,
+    estimate_feature_importances,
 )
 from causal_nest.problem import Problem
 from causal_nest.discovery import (
@@ -80,9 +81,36 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         print("completed")
         return interface_pb2.ModelsResponse(model_names=pickle.dumps(model_list))
 
+    def create_problem_grpc(self, request, context):
+        print("create_problem_grpc")
+        knowledge = pickle.loads(request.knowledge)
+        dataset = pickle.loads(request.dataset)
+        feature_mapping = pickle.loads(request.feature_mapping)
+        target = request.target
+        description = request.description
+
+        dataset = Dataset(data=dataset, target=target, feature_mapping=feature_mapping)
+        dataset = handle_missing_data(dataset, MissingDataHandlingMethod.FORWARD_FILL)
+        dataset = estimate_feature_importances(dataset)
+
+        problem = Problem(dataset=dataset, knowledge=knowledge, description=description)
+        models = applyable_models(problem)
+
+        return interface_pb2.CreateProblemResponse(
+            problem=pickle.dumps(problem), models=pickle.dumps(models)
+        )
+
     def discover_with_all_models_grpc(self, request, context):
         print("discover_with_all_models_grpc")
         problem = pickle.loads(request.problem)
+        print("- pickel working")
+        print("- data:")
+        print("\t - problem", problem)
+        print("\t - max_seconds_model", request.max_seconds_model)
+        print("\t - verbose", request.verbose)
+        print("\t - max_workers", request.max_workers)
+        print("\t - orient_toward_target", request.orient_toward_target)
+
         updated_problem = discover_with_all_models(
             problem,
             max_seconds_model=request.max_seconds_model,
