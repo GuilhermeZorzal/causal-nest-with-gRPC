@@ -32,24 +32,13 @@ from causal_nest.discovery import (
 from causal_nest.estimation import (
     EstimationResult,
     estimate_all_effects,
-    estimate_effect,
 )
 from causal_nest.refutation import (
     refute_all_results,
-    refute_with_model,
 )
 from causal_nest.result import (
     generate_all_results,
 )
-
-# from causal_nest import (
-#     handle_missing_data,
-#     applyable_models,
-#     discover_with_all_models,
-#     estimate_all_effects,
-#     refute_all_results,
-#     generate_all_results,
-# )
 
 
 class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
@@ -93,8 +82,20 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         dataset = handle_missing_data(dataset, MissingDataHandlingMethod.FORWARD_FILL)
         dataset = estimate_feature_importances(dataset)
 
-        problem = Problem(dataset=dataset, knowledge=knowledge, description=description)
+        problem = None
+
+        if knowledge is None:
+            problem = Problem(dataset=dataset, description=description)
+        else:
+            problem = Problem(
+                dataset=dataset, knowledge=knowledge, description=description
+            )
+
         models = applyable_models(problem)
+        if models:
+            models = [model.__name__ for model in models]
+
+        print("completed")
 
         return interface_pb2.CreateProblemResponse(
             problem=pickle.dumps(problem), models=pickle.dumps(models)
