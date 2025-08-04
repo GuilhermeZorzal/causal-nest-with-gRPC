@@ -34,7 +34,7 @@ from causal_nest.estimation import EstimationResult, estimate_all_effects
 from causal_nest.refutation import refute_all_results
 from causal_nest.result import generate_all_results
 
-VERBOSE = True
+VERBOSE = int(os.getenv("VERBOSE", 0))
 
 
 def print_verbose(*args, **kwargs):
