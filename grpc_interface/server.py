@@ -4,6 +4,7 @@ import grpc
 from concurrent import futures
 import sys
 import os
+from grpc import StatusCode
 
 # gRPC interface
 import interface_pb2
@@ -104,61 +105,104 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
     def discover_with_all_models_grpc(self, request, context):
         print("discover_with_all_models_grpc")
         problem = pickle.loads(request.problem)
-        print("- pickel working")
-        print("- data:")
-        print("\t - problem", problem)
-        print("\t - max_seconds_model", request.max_seconds_model)
-        print("\t - verbose", request.verbose)
-        print("\t - max_workers", request.max_workers)
-        print("\t - orient_toward_target", request.orient_toward_target)
 
-        if request.max_workers == 0:
-            request.max_workers = None
-        print("- max_workers set to", request.max_workers)
+        max_workers = request.max_workers
+        if max_workers == 0:
+            max_workers = None
         updated_problem = discover_with_all_models(
             problem,
             max_seconds_model=request.max_seconds_model,
             verbose=request.verbose,
-            max_workers=request.max_workers,
+            max_workers=max_workers,
             orient_toward_target=request.orient_toward_target,
         )
+
+        print("------------------------------------------")
+        print("----------- Discovery Results ------------")
+        print("------------------------------------------")
+        print(updated_problem.discovery_results)
+        print("------------------------------------------")
+
         print("completed")
+        if updated_problem.discovery_results is None:
+            return context.abort(
+                self, StatusCode.INTERNAL, "Discovery did not return a result"
+            )
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def estimate_all_effects_grpc(self, request, context):
         print("estimate_all_effects_grpc")
         problem = pickle.loads(request.problem)
+
+        max_workers = request.max_workers
+        if max_workers == 0:
+            max_workers = None
         updated_problem = estimate_all_effects(
             problem,
             max_seconds_model=request.max_seconds_model,
             verbose=request.verbose,
-            max_workers=request.max_workers,
+            max_workers=max_workers,
         )
+        print("------------------------------------------")
+        print("---------- Estimation Results ------------")
+        print("------------------------------------------")
+        print(updated_problem.estimation_results)
+        print("------------------------------------------")
         print("completed")
+        if updated_problem.estimation_results is None:
+            return context.abort(
+                self, StatusCode.INTERNAL, "Estimation did not return a result"
+            )
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def refute_all_results_grpc(self, request, context):
         print("refute_all_results_grpc")
         problem = pickle.loads(request.problem)
+        max_workers = request.max_workers
+        if max_workers == 0:
+            max_workers = None
         updated_problem = refute_all_results(
             problem,
             max_seconds_global=request.max_seconds_global,
             max_seconds_model=request.max_seconds_model,
             verbose=request.verbose,
-            max_workers=request.max_workers,
+            max_workers=max_workers,
         )
+        print("------------------------------------------")
+        print("---------- Refutation Results ------------")
+        print("------------------------------------------")
+        print(updated_problem.refutation_results)
+        print("------------------------------------------")
         print("completed")
+        if updated_problem.refutation_results is None:
+            return context.abort(
+                self, StatusCode.INTERNAL, "Refutation did not return a result"
+            )
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def generate_all_results_grpc(self, request, context):
         print("generate_all_results_grpc")
         problem = pickle.loads(request.problem)
-        graph_string = generate_all_results(
+        if problem.refutation_results is None:
+            return context.abort(
+                self,
+                StatusCode.INTERNAL,
+                "Refutation results are required to generate graphs",
+            )
+        layout = request.layout_option
+        if layout == "":
+            layout = None
+        graphs = generate_all_results(
             problem,
-            layout_option=request.layout_option,
+            layout_option=layout,
         )
+        print("------------------------------------------")
+        print("---------- Resultant Graphs ------------")
+        print("------------------------------------------")
+        print(graphs)
+        print("------------------------------------------")
         print("completed")
-        return interface_pb2.GraphStringResponse(graph_string=graph_string)
+        return interface_pb2.GraphStringResponse(graph_string=pickle.dumps(graphs))
 
 
 # GRPC server bootstrap

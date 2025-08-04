@@ -134,7 +134,4 @@ message GenerateAllResultsRequest {
   string layout_option = 2;
 }
 
-message GraphStringResponse {
-  string graph_string =
-      1; // textual graph representation (e.g. DOT, JSON, etc.)
-}
+message GraphStringResponse { bytes graph_string = 1; }
