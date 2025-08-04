@@ -175,8 +175,6 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         print_verbose(" - Max Seconds Model:", request.max_seconds_model)
         print_verbose(" - Verbose:", request.verbose)
         print_verbose(" - Max Workers:", max_workers)
-        print_verbose(" - Orient Toward Target:", request.orient_toward_target)
-        print_verbose(" - Discovery Results:", problem.discovery_results)
 
         updated_problem = estimate_all_effects(
             problem,
@@ -273,12 +271,12 @@ def serve():
     server.add_insecure_port("[::]:5555")
     server.start()
 
-    print("      ____  ____   ____   ____                             ")
-    print(" __ _|  _ \\|  _ \\ / ___| / ___|  ___ _ ____   _____ _ __  ")
-    print("/ _` | |_) | |_) | |     \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|")
-    print("| (_| |  _ |  __/| |___   ___) |  __/ |   \\ V /  __/ |  ")
-    print("\\__, |_| \\_\\_|    \\____| |____/ \\___|_|    \\_/ \\___|_|   ")
-    print("|___/                                                    ")
+    print("       ____  ____   ____   ____                             ")
+    print("  __ _|  _ \\|  _ \\ / ___| / ___|  ___ _ ____   _____ _ __  ")
+    print(" / _` | |_) | |_) | |     \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|")
+    print("| (_| |  _  |  __/| |___   ___) |  __/ |   \\ V /  __/ |  ")
+    print(" \\__, |_| \\_\\_|    \\____| |____/ \\___|_|    \\_/ \\___|_|   ")
+    print(" |___/                                                    ")
 
     print("SerializerService running on port 5555...")
     server.wait_for_termination()
