@@ -276,15 +276,13 @@ def serve():
     print("      ____  ____   ____   ____                             ")
     print(" __ _|  _ \\|  _ \\ / ___| / ___|  ___ _ ____   _____ _ __  ")
     print("/ _` | |_) | |_) | |     \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|")
-    print("| (_| |  _ <|  __/| |___   ___) |  __/ |   \\ V /  __/ |  ")
+    print("| (_| |  _ |  __/| |___   ___) |  __/ |   \\ V /  __/ |  ")
     print("\\__, |_| \\_\\_|    \\____| |____/ \\___|_|    \\_/ \\___|_|   ")
     print("|___/                                                    ")
 
     print("SerializerService running on port 5555...")
     server.wait_for_termination()
 
-
-print("Starting gRPC server...")
 
 if __name__ == "__main__":
     serve()
