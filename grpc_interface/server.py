@@ -112,6 +112,9 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
         print("\t - max_workers", request.max_workers)
         print("\t - orient_toward_target", request.orient_toward_target)
 
+        if request.max_workers == 0:
+            request.max_workers = None
+        print("- max_workers set to", request.max_workers)
         updated_problem = discover_with_all_models(
             problem,
             max_seconds_model=request.max_seconds_model,
