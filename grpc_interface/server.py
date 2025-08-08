@@ -1,23 +1,26 @@
 import pickle
+from time import sleep
 import grpc
 from concurrent import futures
 import sys
 import os
+from grpc import StatusCode
+
+# Fix for finding the grpc interface
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # gRPC interface
 import interface_pb2
 import interface_pb2_grpc
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-
-# Native causal nest
+# Causal nest
 from causal_nest.dataset import (
     Dataset,
     FeatureType,
     FeatureTypeMap,
     MissingDataHandlingMethod,
     handle_missing_data,
+    estimate_feature_importances,
 )
 from causal_nest.problem import Problem
 from causal_nest.discovery import (
@@ -27,95 +30,232 @@ from causal_nest.discovery import (
     applyable_models,
 )
 
-from causal_nest.estimation import (
-    EstimationResult,
-    estimate_all_effects,
-    estimate_effect,
-)
-from causal_nest.refutation import (
-    refute_all_results,
-    refute_with_model,
-)
-from causal_nest.result import (
-    generate_all_results,
-)
+from causal_nest.estimation import EstimationResult, estimate_all_effects
+from causal_nest.refutation import refute_all_results
+from causal_nest.result import generate_all_results
 
-# from causal_nest import (
-#     handle_missing_data,
-#     applyable_models,
-#     discover_with_all_models,
-#     estimate_all_effects,
-#     refute_all_results,
-#     generate_all_results,
-# )
+VERBOSE = int(os.getenv("VERBOSE", 0))
+
+
+def print_verbose(*args, **kwargs):
+    """
+    Verbose print: for debbuging purposes, prints useful information about whats going on.
+    """
+    if VERBOSE:
+        print(*args, **kwargs)
 
 
 class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
-    def testing_connection_grpc(self, request, context):
-        print("testing_connection_grpc")
-        return interface_pb2.ProblemResponse(problem=pickle.dumps(request.problem))
 
+    """
+    'handle_missing_data_grpc' and 'applyable_models_grpc' are some of the disponible functions that were not implemented
+    (as its not being used on the causal nest backend). 
+
+    To implement these functions, just look at: 
+    - the interface.proto file for the request and response types
+    - the documentation of the causal nest library for the corresponding function.
+    - the structure of the implemented functions below (so they stay consistent with all that was already done).
+    """
     def handle_missing_data_grpc(self, request, context):
-        print("handle_missing_data_grpc")
-        dataset: Dataset = pickle.loads(request.dataset)
-        method: MissingDataHandlingMethod = pickle.loads(
-            request.missing_data_handling_method
-        )
-        if method is None:
-            method = MissingDataHandlingMethod.DROP
-        result: Dataset = handle_missing_data(dataset=dataset, method=method)
-
-        return interface_pb2.DatasetResponse(dataset=pickle.dumps(result))
+        pass
 
     def applyable_models_grpc(self, request, context):
-        print("applyable_models_grpc")
-        problem: Problem = pickle.loads(request.problem)
-        model_list = applyable_models(problem)
-        return interface_pb2.ModelsResponse(model_names=pickle.dumps(model_list))
+        pass
+
+
+    # IMPLEMENTED FUNCTIONS:
+
+    def testing_connection_grpc(self, request, context):
+        print("==========================================")
+        print("testing_connection_grpc")
+        sleep(5)
+        print("complete")
+        print("==========================================")
+        return interface_pb2.ProblemResponse(
+            problem=pickle.dumps("Connection successful!")
+        )
+
+
+    def create_problem_grpc(self, request, context):
+        print("==========================================")
+        print("create_problem_grpc")
+        knowledge = pickle.loads(request.knowledge)
+        dataset = pickle.loads(request.dataset)
+        feature_mapping = pickle.loads(request.feature_mapping)
+        target = request.target
+        description = request.description
+
+        # Display information
+        print_verbose(" - Knowledge:", knowledge)
+        print_verbose(" - Dataset:", dataset)
+        print_verbose(" - Feature Mapping:", feature_mapping)
+        print_verbose(" - Target:", target)
+        print_verbose(" - Description:", description)
+
+        # Creating problem
+        dataset = Dataset(data=dataset, target=target, feature_mapping=feature_mapping)
+        dataset = handle_missing_data(dataset, MissingDataHandlingMethod.FORWARD_FILL)
+        dataset = estimate_feature_importances(dataset)
+
+        problem = None
+
+        if knowledge is None:
+            problem = Problem(dataset=dataset, description=description)
+        else:
+            problem = Problem(
+                dataset=dataset, knowledge=knowledge, description=description
+            )
+
+        models = applyable_models(problem)
+        if models:
+            models = [model.__name__ for model in models]
+
+        print("completed")
+        print("==========================================")
+
+        return interface_pb2.CreateProblemResponse(
+            problem=pickle.dumps(problem), models=pickle.dumps(models)
+        )
 
     def discover_with_all_models_grpc(self, request, context):
+        print("==========================================")
         print("discover_with_all_models_grpc")
         problem = pickle.loads(request.problem)
+
+        # Fixing type to match causal nest function signature
+        max_workers = request.max_workers
+        if max_workers == 0:
+            max_workers = None
+
+        # Display information
+        print_verbose(" - Problem:", problem)
+        print_verbose(" - Max Seconds Model:", request.max_seconds_model)
+        print_verbose(" - Verbose:", request.verbose)
+        print_verbose(" - Max Workers:", max_workers)
+        print_verbose(" - Orient Toward Target:", request.orient_toward_target)
+
         updated_problem = discover_with_all_models(
             problem,
             max_seconds_model=request.max_seconds_model,
             verbose=request.verbose,
-            max_workers=request.max_workers,
+            max_workers=max_workers,
             orient_toward_target=request.orient_toward_target,
         )
+
+        print("------------------------------------------")
+        print("----------- Discovery Results ------------")
+        print("------------------------------------------")
+        print(updated_problem.discovery_results)
+        print("------------------------------------------")
+
+        print("completed")
+        print("==========================================")
+        if updated_problem.discovery_results is None:
+            return context.abort(
+                self, StatusCode.INTERNAL, "Discovery did not return a result"
+            )
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def estimate_all_effects_grpc(self, request, context):
+        print("==========================================")
         print("estimate_all_effects_grpc")
         problem = pickle.loads(request.problem)
+
+        # Fixing type to match causal nest function signature
+        max_workers = request.max_workers
+        if max_workers == 0:
+            max_workers = None
+
+        # Display information
+        print_verbose(" - Problem:", problem)
+        print_verbose(" - Max Seconds Model:", request.max_seconds_model)
+        print_verbose(" - Verbose:", request.verbose)
+        print_verbose(" - Max Workers:", max_workers)
+
         updated_problem = estimate_all_effects(
             problem,
             max_seconds_model=request.max_seconds_model,
             verbose=request.verbose,
-            max_workers=request.max_workers,
+            max_workers=max_workers,
         )
+        print("------------------------------------------")
+        print("---------- Estimation Results ------------")
+        print("------------------------------------------")
+        print(updated_problem.estimation_results)
+        print("------------------------------------------")
+        print("completed")
+        print("==========================================")
+        if updated_problem.estimation_results is None:
+            return context.abort(
+                self, StatusCode.INTERNAL, "Estimation did not return a result"
+            )
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def refute_all_results_grpc(self, request, context):
+        print("==========================================")
         print("refute_all_results_grpc")
         problem = pickle.loads(request.problem)
+
+        # Fixing type to match causal nest function signature
+        max_workers = request.max_workers
+        if max_workers == 0:
+            max_workers = None
+
+        # Display information
+        print_verbose(" - Problem:", problem)
+        print_verbose(" - Max Seconds Global:", request.max_seconds_global)
+        print_verbose(" - Max Seconds Model:", request.max_seconds_model)
+        print_verbose(" - Verbose:", request.verbose)
+        print_verbose(" - Max Workers:", max_workers)
+
         updated_problem = refute_all_results(
             problem,
             max_seconds_global=request.max_seconds_global,
             max_seconds_model=request.max_seconds_model,
             verbose=request.verbose,
-            max_workers=request.max_workers,
+            max_workers=max_workers,
         )
+        print("------------------------------------------")
+        print("---------- Refutation Results ------------")
+        print("------------------------------------------")
+        print(updated_problem.refutation_results)
+        print("------------------------------------------")
+        print("completed")
+        print("==========================================")
+        if updated_problem.refutation_results is None:
+            return context.abort(
+                self, StatusCode.INTERNAL, "Refutation did not return a result"
+            )
         return interface_pb2.ProblemResponse(problem=pickle.dumps(updated_problem))
 
     def generate_all_results_grpc(self, request, context):
+        print("==========================================")
         print("generate_all_results_grpc")
         problem = pickle.loads(request.problem)
-        graph_string = generate_all_results(
+        if problem.refutation_results is None:
+            return context.abort(
+                self,
+                StatusCode.INTERNAL,
+                "Refutation results are required to generate graphs",
+            )
+
+        # Fixing type to match causal nest function signature
+        layout = request.layout_option
+        if layout == "":
+            layout = None
+
+        graphs = generate_all_results(
             problem,
-            layout_option=request.layout_option,
+            layout_option=layout,
         )
-        return interface_pb2.GraphStringResponse(graph_string=graph_string)
+        print("------------------------------------------")
+        print("----------- Resultant Graphs -------------")
+        print("------------------------------------------")
+        print(graphs)
+        print("------------------------------------------")
+        print("completed")
+        print("==========================================")
+        return interface_pb2.GraphStringResponse(graph_string=pickle.dumps(graphs))
 
 
 # GRPC server bootstrap
@@ -126,11 +266,17 @@ def serve():
     )
     server.add_insecure_port("[::]:5555")
     server.start()
+
+    print("       ____  ____   ____   ____                             ")
+    print("  __ _|  _ \\|  _ \\ / ___| / ___|  ___ _ ____   _____ _ __  ")
+    print(" / _` | |_) | |_) | |     \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|")
+    print("| (_| |  _  |  __/| |___   ___) |  __/ |   \\ V /  __/ |  ")
+    print(" \\__, |_| \\_\\_|    \\____| |____/ \\___|_|    \\_/ \\___|_|   ")
+    print(" |___/                                                    ")
+
     print("SerializerService running on port 5555...")
     server.wait_for_termination()
 
-
-print("Starting gRPC server...")
 
 if __name__ == "__main__":
     serve()

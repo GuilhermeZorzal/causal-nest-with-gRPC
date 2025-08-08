@@ -1,6 +1,10 @@
 # CausalNest
 A nest of causal tools for building a full causal pipeline: from data treating, exploring to causal discovery and inference!
 
+# Fork specific inforation
+
+All the information about the forked repository can be found in the [grpc interface README](grpc_interface/README.md). The below information is about the original repository.
+
 ## Overview
 CausalNest provides a comprehensive suite of tools for building a full causal pipeline, from data treatment and exploration to causal discovery and inference. The framework is organized into several modules:
 
@@ -101,3 +105,4 @@ graphviz_source.render(format='png')
 ```
 
 For more detailed examples and usage, please refer to the notebooks directory.
+
