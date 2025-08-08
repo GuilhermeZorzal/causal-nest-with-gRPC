@@ -46,39 +46,35 @@ def print_verbose(*args, **kwargs):
 
 
 class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
+
+    """
+    'handle_missing_data_grpc' and 'applyable_models_grpc' are some of the disponible functions that were not implemented
+    (as its not being used on the causal nest backend). 
+
+    To implement these functions, just look at: 
+    - the interface.proto file for the request and response types
+    - the documentation of the causal nest library for the corresponding function.
+    - the structure of the implemented functions below (so they stay consistent with all that was already done).
+    """
+    def handle_missing_data_grpc(self, request, context):
+        pass
+
+    def applyable_models_grpc(self, request, context):
+        pass
+
+
+    # IMPLEMENTED FUNCTIONS:
+
     def testing_connection_grpc(self, request, context):
         print("==========================================")
         print("testing_connection_grpc")
-        sleep(10)
+        sleep(5)
         print("complete")
         print("==========================================")
         return interface_pb2.ProblemResponse(
             problem=pickle.dumps("Connection successful!")
         )
 
-    def handle_missing_data_grpc(self, request, context):
-        print("==========================================")
-        print("handle_missing_data_grpc")
-        dataset: Dataset = pickle.loads(request.dataset)
-        method: MissingDataHandlingMethod = pickle.loads(
-            request.missing_data_handling_method
-        )
-        if method is None:
-            method = MissingDataHandlingMethod.DROP
-        result: Dataset = handle_missing_data(dataset=dataset, method=method)
-        print("completed")
-        print("==========================================")
-
-        return interface_pb2.DatasetResponse(dataset=pickle.dumps(result))
-
-    def applyable_models_grpc(self, request, context):
-        print("==========================================")
-        print("applyable_models_grpc")
-        problem: Problem = pickle.loads(request.problem)
-        model_list = applyable_models(problem)
-        print("completed")
-        print("==========================================")
-        return interface_pb2.ModelsResponse(model_names=pickle.dumps(model_list))
 
     def create_problem_grpc(self, request, context):
         print("==========================================")
