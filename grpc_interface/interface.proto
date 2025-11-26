@@ -4,40 +4,35 @@ service SerializerService {
   rpc testing_connection_grpc(ProblemRequest) returns (ProblemResponse);
 
   // Problem (all steps until the problem is fully defined)
-  rpc create_problem_grpc(CreateProblemRequest) returns (CreateProblemResponse);
+  rpc create_problem_grpc(CreateProblemRequest) returns (stream CreateProblemResponse);
 
   // Datasets
   rpc handle_missing_data_grpc(MissingDataRequest) returns (DatasetResponse);
   rpc applyable_models_grpc(ProblemRequest) returns (ModelsResponse);
 
   // Discovery
-  rpc discover_with_model_grpc(DiscoverWithModelRequest)
-      returns (DiscoveryResultResponse);
-  rpc discover_with_all_models_grpc(DiscoverWithAllModelsRequest)
-      returns (ProblemResponse);
+  rpc discover_with_model_grpc(DiscoverWithModelRequest) returns (stream DiscoveryResultResponse);
+  rpc discover_with_all_models_grpc(DiscoverWithAllModelsRequest) returns (stream ProblemResponse);
 
   // Estimation
-  rpc estimate_model_effects_grpc(EstimateModelEffectsRequest)
-      returns (EstimationResultResponse);
-  rpc estimate_all_effects_grpc(EstimateAllEffectsRequest)
-      returns (ProblemResponse);
+  rpc estimate_model_effects_grpc(EstimateModelEffectsRequest) returns (stream EstimationResultResponse);
+  rpc estimate_all_effects_grpc(EstimateAllEffectsRequest) returns (stream ProblemResponse);
 
   // Refutation
-  rpc refute_with_model_grpc(RefuteWithModelRequest)
-      returns (RefutationResultResponse);
-  rpc refute_all_results_grpc(RefuteAllResultsRequest)
-      returns (ProblemResponse);
+  rpc refute_with_model_grpc(RefuteWithModelRequest) returns (stream RefutationResultResponse);
+  rpc refute_all_results_grpc(RefuteAllResultsRequest) returns (stream ProblemResponse);
 
   // Results
-  rpc generate_result_graph_grpc(GenerateResultGraphRequest)
-      returns (GraphStringResponse);
-  rpc generate_all_results_grpc(GenerateAllResultsRequest)
-      returns (GraphStringResponse);
+  rpc generate_result_graph_grpc(GenerateResultGraphRequest) returns (GraphStringResponse);
+  rpc generate_all_results_grpc(GenerateAllResultsRequest) returns (GraphStringResponse);
 }
 
 // MESSAGES
 // Problem
-message ProblemResponse { bytes problem = 1; }
+message ProblemResponse { 
+  bytes problem = 1;
+  string status = 2;
+}
 
 // --------------------------------------------
 // Problem
@@ -52,6 +47,7 @@ message CreateProblemRequest {
 message CreateProblemResponse {
   bytes problem = 1;
   bytes models = 2;
+  string status = 3;
 }
 
 // --------------------------------------------
@@ -60,10 +56,16 @@ message MissingDataRequest {
   bytes dataset = 1;
   bytes missing_data_handling_method = 2;
 }
-message DatasetResponse { bytes dataset = 1; }
+message DatasetResponse { 
+  bytes dataset = 1;
+  string status = 2;
+}
 
 message ProblemRequest { bytes problem = 1; }
-message ModelsResponse { bytes model_names = 1; }
+message ModelsResponse { 
+  bytes model_names = 1;
+  string status = 2;
+}
 
 // --------------------------------------------
 // Discovery
@@ -83,7 +85,10 @@ message DiscoverWithAllModelsRequest {
   bool orient_toward_target = 5;
 }
 
-message DiscoveryResultResponse { bytes discovery_result = 1; }
+message DiscoveryResultResponse { 
+  bytes discovery_result = 1;
+  string status = 2;
+}
 
 // --------------------------------------------
 // Estimation
@@ -100,7 +105,10 @@ message EstimateModelEffectsRequest {
   bytes discovery_result = 2;
   int32 timeout = 3;
 }
-message EstimationResultResponse { bytes estimation_result = 1; }
+message EstimationResultResponse { 
+  bytes estimation_result = 1;
+  string status = 2;
+}
 
 // --------------------------------------------
 // Refutation
@@ -118,7 +126,10 @@ message RefuteWithModelRequest {
   bytes estimation_result = 2;
   string model = 3;
 }
-message RefutationResultResponse { bytes refutation_result = 1; }
+message RefutationResultResponse {
+  bytes refutation_result = 1;
+  string status = 2;
+}
 
 // --------------------------------------------
 // Results
@@ -132,6 +143,7 @@ message GenerateResultGraphRequest {
 message GenerateAllResultsRequest {
   bytes problem = 1;
   string layout_option = 2;
+  string status = 3;
 }
 
 message GraphStringResponse { bytes graph_string = 1; }

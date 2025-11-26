@@ -5,7 +5,7 @@ import warnings
 
 import interface_pb2 as interface__pb2
 
-GRPC_GENERATED_VERSION = '1.74.0'
+GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -39,7 +39,7 @@ class SerializerServiceStub(object):
                 request_serializer=interface__pb2.ProblemRequest.SerializeToString,
                 response_deserializer=interface__pb2.ProblemResponse.FromString,
                 _registered_method=True)
-        self.create_problem_grpc = channel.unary_unary(
+        self.create_problem_grpc = channel.unary_stream(
                 '/SerializerService/create_problem_grpc',
                 request_serializer=interface__pb2.CreateProblemRequest.SerializeToString,
                 response_deserializer=interface__pb2.CreateProblemResponse.FromString,
@@ -54,32 +54,32 @@ class SerializerServiceStub(object):
                 request_serializer=interface__pb2.ProblemRequest.SerializeToString,
                 response_deserializer=interface__pb2.ModelsResponse.FromString,
                 _registered_method=True)
-        self.discover_with_model_grpc = channel.unary_unary(
+        self.discover_with_model_grpc = channel.unary_stream(
                 '/SerializerService/discover_with_model_grpc',
                 request_serializer=interface__pb2.DiscoverWithModelRequest.SerializeToString,
                 response_deserializer=interface__pb2.DiscoveryResultResponse.FromString,
                 _registered_method=True)
-        self.discover_with_all_models_grpc = channel.unary_unary(
+        self.discover_with_all_models_grpc = channel.unary_stream(
                 '/SerializerService/discover_with_all_models_grpc',
                 request_serializer=interface__pb2.DiscoverWithAllModelsRequest.SerializeToString,
                 response_deserializer=interface__pb2.ProblemResponse.FromString,
                 _registered_method=True)
-        self.estimate_model_effects_grpc = channel.unary_unary(
+        self.estimate_model_effects_grpc = channel.unary_stream(
                 '/SerializerService/estimate_model_effects_grpc',
                 request_serializer=interface__pb2.EstimateModelEffectsRequest.SerializeToString,
                 response_deserializer=interface__pb2.EstimationResultResponse.FromString,
                 _registered_method=True)
-        self.estimate_all_effects_grpc = channel.unary_unary(
+        self.estimate_all_effects_grpc = channel.unary_stream(
                 '/SerializerService/estimate_all_effects_grpc',
                 request_serializer=interface__pb2.EstimateAllEffectsRequest.SerializeToString,
                 response_deserializer=interface__pb2.ProblemResponse.FromString,
                 _registered_method=True)
-        self.refute_with_model_grpc = channel.unary_unary(
+        self.refute_with_model_grpc = channel.unary_stream(
                 '/SerializerService/refute_with_model_grpc',
                 request_serializer=interface__pb2.RefuteWithModelRequest.SerializeToString,
                 response_deserializer=interface__pb2.RefutationResultResponse.FromString,
                 _registered_method=True)
-        self.refute_all_results_grpc = channel.unary_unary(
+        self.refute_all_results_grpc = channel.unary_stream(
                 '/SerializerService/refute_all_results_grpc',
                 request_serializer=interface__pb2.RefuteAllResultsRequest.SerializeToString,
                 response_deserializer=interface__pb2.ProblemResponse.FromString,
@@ -185,7 +185,7 @@ def add_SerializerServiceServicer_to_server(servicer, server):
                     request_deserializer=interface__pb2.ProblemRequest.FromString,
                     response_serializer=interface__pb2.ProblemResponse.SerializeToString,
             ),
-            'create_problem_grpc': grpc.unary_unary_rpc_method_handler(
+            'create_problem_grpc': grpc.unary_stream_rpc_method_handler(
                     servicer.create_problem_grpc,
                     request_deserializer=interface__pb2.CreateProblemRequest.FromString,
                     response_serializer=interface__pb2.CreateProblemResponse.SerializeToString,
@@ -200,32 +200,32 @@ def add_SerializerServiceServicer_to_server(servicer, server):
                     request_deserializer=interface__pb2.ProblemRequest.FromString,
                     response_serializer=interface__pb2.ModelsResponse.SerializeToString,
             ),
-            'discover_with_model_grpc': grpc.unary_unary_rpc_method_handler(
+            'discover_with_model_grpc': grpc.unary_stream_rpc_method_handler(
                     servicer.discover_with_model_grpc,
                     request_deserializer=interface__pb2.DiscoverWithModelRequest.FromString,
                     response_serializer=interface__pb2.DiscoveryResultResponse.SerializeToString,
             ),
-            'discover_with_all_models_grpc': grpc.unary_unary_rpc_method_handler(
+            'discover_with_all_models_grpc': grpc.unary_stream_rpc_method_handler(
                     servicer.discover_with_all_models_grpc,
                     request_deserializer=interface__pb2.DiscoverWithAllModelsRequest.FromString,
                     response_serializer=interface__pb2.ProblemResponse.SerializeToString,
             ),
-            'estimate_model_effects_grpc': grpc.unary_unary_rpc_method_handler(
+            'estimate_model_effects_grpc': grpc.unary_stream_rpc_method_handler(
                     servicer.estimate_model_effects_grpc,
                     request_deserializer=interface__pb2.EstimateModelEffectsRequest.FromString,
                     response_serializer=interface__pb2.EstimationResultResponse.SerializeToString,
             ),
-            'estimate_all_effects_grpc': grpc.unary_unary_rpc_method_handler(
+            'estimate_all_effects_grpc': grpc.unary_stream_rpc_method_handler(
                     servicer.estimate_all_effects_grpc,
                     request_deserializer=interface__pb2.EstimateAllEffectsRequest.FromString,
                     response_serializer=interface__pb2.ProblemResponse.SerializeToString,
             ),
-            'refute_with_model_grpc': grpc.unary_unary_rpc_method_handler(
+            'refute_with_model_grpc': grpc.unary_stream_rpc_method_handler(
                     servicer.refute_with_model_grpc,
                     request_deserializer=interface__pb2.RefuteWithModelRequest.FromString,
                     response_serializer=interface__pb2.RefutationResultResponse.SerializeToString,
             ),
-            'refute_all_results_grpc': grpc.unary_unary_rpc_method_handler(
+            'refute_all_results_grpc': grpc.unary_stream_rpc_method_handler(
                     servicer.refute_all_results_grpc,
                     request_deserializer=interface__pb2.RefuteAllResultsRequest.FromString,
                     response_serializer=interface__pb2.ProblemResponse.SerializeToString,
@@ -289,7 +289,7 @@ class SerializerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/SerializerService/create_problem_grpc',
@@ -370,7 +370,7 @@ class SerializerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/SerializerService/discover_with_model_grpc',
@@ -397,7 +397,7 @@ class SerializerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/SerializerService/discover_with_all_models_grpc',
@@ -424,7 +424,7 @@ class SerializerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/SerializerService/estimate_model_effects_grpc',
@@ -451,7 +451,7 @@ class SerializerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/SerializerService/estimate_all_effects_grpc',
@@ -478,7 +478,7 @@ class SerializerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/SerializerService/refute_with_model_grpc',
@@ -505,7 +505,7 @@ class SerializerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/SerializerService/refute_all_results_grpc',
