@@ -10,6 +10,7 @@ from grpc import StatusCode
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # gRPC interface
+from causal_nest.results_json import generate_all_results_json
 import interface_pb2
 import interface_pb2_grpc
 
@@ -249,7 +250,7 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
             layout_option=layout,
         )
         print("------------------------------------------")
-        print("----------- Resultant Graphs -------------")
+        print("--------- Resultant Graphs JSON ----------")
         print("------------------------------------------")
         print(graphs)
         print("------------------------------------------")
@@ -260,7 +261,24 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
 
 # GRPC server bootstrap
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+
+    # In order to maintain long-running connections without interruptions, we set custom gRPC server options.
+    server_options = [
+        ("grpc.max_receive_message_length", 100 * 1024 * 1024),
+        ("grpc.max_send_message_length", 100 * 1024 * 1024),
+        ("grpc.keepalive_time_ms", 7200000),
+        ("grpc.keepalive_timeout_ms", 100000),
+        ("grpc.http2.min_ping_interval_without_data_ms", 1200000),
+        ("grpc.http2.max_pings_without_data", 0),
+        ("grpc.keepalive_permit_without_calls", 1),
+        ("grpc.max_connection_idle_ms", 604800000),
+        ("grpc.max_connection_age_ms", 604800000),
+        ("grpc.max_connection_age_grace_ms", 900000),
+    ]
+    server = grpc.server(
+        thread_pool=futures.ThreadPoolExecutor(max_workers=10),
+        options=server_options,
+    )
     interface_pb2_grpc.add_SerializerServiceServicer_to_server(
         SerializerServiceServicer(), server
     )
