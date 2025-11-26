@@ -181,7 +181,7 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
                 max_seconds_model=request.max_seconds_model,
                 verbose=request.verbose,
                 # max_workers=max_workers,
-                max_workers=MAX_CORES - 1,
+                max_workers=MAX_CORES - 1, # Maintain at least one core free for the gRPC server
                 orient_toward_target=request.orient_toward_target,
             )
 
@@ -249,7 +249,7 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
                 problem,
                 max_seconds_model=request.max_seconds_model,
                 verbose=request.verbose,
-                max_workers=max_workers,
+                max_workers=MAX_CORES - 1, # Maintain at least one core free for the gRPC server
             )
 
             while not future.done():
@@ -321,7 +321,7 @@ class SerializerServiceServicer(interface_pb2_grpc.SerializerServiceServicer):
                 max_seconds_global=request.max_seconds_global,
                 max_seconds_model=request.max_seconds_model,
                 verbose=request.verbose,
-                max_workers=max_workers,
+                max_workers=MAX_CORES - 1, # Maintain at least one core free for the gRPC server
             )
 
             while not future.done():
