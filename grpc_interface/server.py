@@ -47,7 +47,7 @@ class Status(Enum):
 
 
 # Total number of cores avaliable for processing
-MAX_CORES = int(os.getenv("MAX_CORES", "6"))
+MAX_CORES = int(os.getenv("MAX_CORES", "8"))
 PING_INTERVAL = int(os.getenv("PING_INTERVAL", "30"))
 
 background_executor = futures.ThreadPoolExecutor(max_workers=MAX_CORES)
@@ -445,71 +445,3 @@ def serve():
 
 if __name__ == "__main__":
     serve()
-# def refute_all_results_grpc(self, request, context):
-#     print("==========================================")
-#     print("refute_all_results_grpc")
-#
-#     # Streaming initial response
-#     yield interface_pb2.ProblemResponse(
-#         problem=b'', 
-#         status=Status.RUNNING.value
-#     )
-#
-#     # 1. Prepare parameters
-#     try:
-#         problem = pickle.loads(request.problem)
-#         max_workers = request.max_workers if request.max_workers != 0 else None
-#
-#         # 2. Submit the long-running function to the thread pool
-#         future = background_executor.submit(
-#             refute_all_results,
-#             problem,
-#             max_seconds_global=request.max_seconds_global,
-#             max_seconds_model=request.max_seconds_model,
-#             verbose=request.verbose,
-#             max_workers=max_workers,
-#         )
-#
-#         # 3. Intermediate Yielding Loop (The "Ping" Mechanism)
-#         # We will yield a status update every 30 seconds to maintain the connection.
-#         ping_interval_seconds = 30
-#
-#         while not future.done():
-#             # Check if the RPC is still active (client hasn't cancelled)
-#             if not context.is_active():
-#                 # Client disconnected, cancel the future and break
-#                 future.cancel()
-#                 print("Client disconnected, cancelling refutation task.")
-#                 return 
-#
-#             # Yield an intermediate status update to reset all network/gRPC idle timers
-#             yield interface_pb2.ProblemResponse(
-#                 problem=b'', 
-#                 status=Status.RUNNING.value # Keep sending RUNNING status
-#             )
-#
-#             sleep(ping_interval_seconds) # Wait before checking the task and pinging again
-#
-#         # 4. Process the Result
-#         updated_problem = future.result() # Get the result (this will raise any exceptions from the background thread)
-#
-#         # ... print statements ...
-#
-#         if updated_problem.refutation_results is None:
-#             raise Exception("Refutation did not return a result")
-#
-#         # Final success yield
-#         yield interface_pb2.ProblemResponse(
-#             problem=pickle.dumps(updated_problem), 
-#             status=Status.COMPLETED.value
-#         )
-#
-#     except Exception as e:
-#         print("Error during refutation:", str(e))
-#
-#         # Yield FAILED status
-#         yield interface_pb2.ProblemResponse(
-#             problem=b'',
-#             status=Status.FAILED.value
-#         )
-#         return # Terminate stream after failure yield
