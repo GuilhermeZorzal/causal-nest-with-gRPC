@@ -52,14 +52,15 @@ RUN Rscript --vanilla -e 'install.packages("discretecdAlgorithm", repos="https:/
 # RUN Rscript --vanilla -e 'library(devtools); install_github("cran/CAM"); install_github("cran/momentchi2"); install_github("Diviyan-Kalainathan/RCIT"); install_github("cran/discretecdAlgorithm")'
 RUN Rscript --vanilla -e 'install.packages("devtools", repos="https://cloud.r-project.org", Ncpus=4)'
 
-RUN Rscript --vanilla -e 'library(devtools); install_github("cran/CAM")'
+## Two "#" are dependencies removed due to error with the install_github command
+# # RUN Rscript --vanilla -e 'library(devtools); install_github("cran/CAM")'
 # RUN Rscript --vanilla -e 'install.packages("CAM", repos="https://cloud.r-project.org", Ncpus=4)'
-RUN Rscript --vanilla -e 'library(devtools); install_github("cran/momentchi2")'
+# # RUN Rscript --vanilla -e 'library(devtools); install_github("cran/momentchi2")'
 # RUN Rscript --vanilla -e 'install.packages("momentchi2", repos="https://cloud.r-project.org", Ncpus=4)'
-RUN Rscript --vanilla -e 'library(devtools); install_github("Diviyan-Kalainathan/RCIT")'
+# # RUN Rscript --vanilla -e 'library(devtools); install_github("Diviyan-Kalainathan/RCIT")'
 # RUN Rscript --vanilla -e 'install.packages("RCIT", repos="https://cloud.r-project.org", Ncpus=4)'
 
-RUN Rscript --vanilla -e 'library(devtools); install_github("cran/discretecdAlgorithm")'
+# # RUN Rscript --vanilla -e 'library(devtools); install_github("cran/discretecdAlgorithm")'
 # RUN Rscript --vanilla -e 'install.packages("https://cran.irsn.fr/src/contrib/Archive/sparsebn/sparsebn_0.1.2.tar.gz", repos=NULL, type="source", Ncpus=4)'
 RUN Rscript --vanilla -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/sparsebn/sparsebn_0.1.2.tar.gz", repos=NULL, type="source", Ncpus=4)'
 # RUN Rscript --vanilla -e 'BiocManager::install(c("bnlearn", "CAM", "SID", "D2C", "pcalg", "kpcalg", "glmnet", "mboost"), Ncpus=4)'
